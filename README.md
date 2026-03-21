@@ -64,7 +64,8 @@ Built using **MERN Stack + AI APIs + ImageKit**, Nexa provides a modern ChatGPT-
 
 ## 📸 Screenshots
 
-
+![Screenshots](ss1.png)
+![Screenshots](ss2.png)
 
 ---
 
