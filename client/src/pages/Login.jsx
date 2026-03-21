@@ -1,129 +1,120 @@
 import React, { useState } from "react";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
+import axios from 'axios'
 
-const Login = () => {
+
+const Login = () =>{
   const [state, setState] = useState("login");
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const {axios,setToken}= useAppContext()
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    const url= state === "login" ? '/api/user/login' : '/api/user/register'
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (state === "login") {
-      console.log("Login Data:", formData);
-    } else {
-      console.log("Signup Data:", formData);
+    try {
+      const {data}=await axios.post(url, {name, email, password})
+      if(data.success) {
+        setToken(data.token)
+        localStorage.setItem('token', data.token)
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
     }
-  };
-
+  }
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full sm:w-96 text-center bg-white/5 border border-white/10 rounded-2xl px-8 py-6 backdrop-blur-xl"
-      >
-        {/* Title */}
-        <h1 className="text-white text-3xl font-medium mt-4">
-          {state === "login" ? "Login" : "Sign up"}
-        </h1>
+  
+    
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px]
+      text-gray-300 rounded-2xl shadow-2xl border border-white/10
+      bg-white/5 backdrop-blur-xl"
+    >
+      <p className="text-2xl font-medium m-auto">
+        <span className="text-blue-400">User</span>{" "}
+        {state === "login" ? "Login" : "Sign Up"}
+      </p>
 
-        {/* Subtitle */}
-        <p className="text-gray-400 text-sm mt-2">
-          {state === "login"
-            ? "Please login in to continue"
-            : "Create a new account"}
-        </p>
-
-        {/* Name (Signup only) */}
-        {state !== "login" && (
-          <div className="flex items-center mt-6 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-blue-500 h-12 rounded-full pl-6 gap-2 transition">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              className="w-full bg-transparent text-white placeholder-white/60 outline-none"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        )}
-
-        {/* Email */}
-        <div className="flex items-center w-full mt-4 bg-white/5 ring-2 ring-white/10 focus-within:ring-blue-500 h-12 rounded-full pl-6 gap-2 transition">
+      {state === "register" && (
+        <div className="w-full">
+          <p className="text-gray-400">Name</p>
           <input
-            type="email"
-            name="email"
-            placeholder="Email id"
-            className="w-full bg-transparent text-white placeholder-white/60 outline-none"
-            value={formData.email}
-            onChange={handleChange}
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            placeholder="Name"
+            className="border border-white/10 bg-white/5 text-white placeholder-gray-500
+            rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
             required
           />
         </div>
+      )}
 
-        <div className="flex items-center mt-4 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-blue-500 h-12 rounded-full pl-6 gap-2 transition">
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="w-full bg-transparent text-white placeholder-white/60 outline-none"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <div className="w-full">
+        <p className="text-gray-400">Email</p>
+        <input
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          placeholder="Email id"
+          className="border border-white/10 bg-white/5 text-white placeholder-gray-500
+          rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
+          type="email"
+          required
+        />
+      </div>
 
-        {state === "login" && (
-          <div className="mt-4 text-left">
-            <button
-              type="button"
-              className="text-sm text-blue-400 hover:underline"
-            >
-              Forgot password?
-            </button>
-          </div>
-        )}
+      <div className="w-full">
+        <p className="text-gray-400">Password</p>
+        <input
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          placeholder="Password"
+          className="border border-white/10 bg-white/5 text-white placeholder-gray-500
+          rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
+          type="password"
+          required
+        />
+      </div>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          className="mt-6 w-full h-11 rounded-full text-white bg-blue-600 hover:bg-blue-500 transition"
-        >
-          {state === "login" ? "Login" : "Sign up"}
-        </button>
-
-        {/* Toggle */}
-        <p
-          onClick={() =>
-            setState((prev) => (prev === "login" ? "signup" : "login"))
-          }
-          className="text-gray-400 text-sm mt-4 cursor-pointer"
-        >
-          {state === "login"
-            ? "Don't have an account?"
-            : "Already have an account?"}
-          <span className="text-blue-400 hover:underline ml-1">
+      {state === "register" ? (
+        <p className="text-gray-400">
+          Already have account?{" "}
+          <span
+            onClick={() => setState("login")}
+            className="text-blue-400 cursor-pointer"
+          >
             click here
           </span>
         </p>
-      </form>
+      ) : (
+        <p className="text-gray-400">
+          Create an account?{" "}
+          <span
+            onClick={() => setState("register")}
+            className="text-blue-400 cursor-pointer"
+          >
+            click here
+          </span>
+        </p>
+      )}
 
-      
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute left-1/2 top-20 -translate-x-1/2 w-[500px] h-[250px] bg-gradient-to-tr from-blue-800/30 to-transparent rounded-full blur-3xl" />
-        <div className="absolute right-12 bottom-10 w-[300px] h-[150px] bg-gradient-to-bl from-blue-700/30 to-transparent rounded-full blur-2xl" />
-      </div>
-    </>
-  );
-};
+      <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-600 transition-all
+        text-white w-full py-2 rounded-md cursor-pointer"
+      >
+        {state === "register" ? "Create Account" : "Login"}
+      </button>
+    </form>
 
+    
+);
+
+}
 export default Login;

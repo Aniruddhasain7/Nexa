@@ -7,9 +7,7 @@ import chatRouter from './routes/chatRoutes.js'
 import messageRouter from './routes/messageRoutes.js'
 
 const app = express()
-
-await connectDB()
-
+connectDB()
 app.use(cors())
 app.use(express.json())
 
@@ -20,6 +18,6 @@ app.use('/api/message', messageRouter)
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })

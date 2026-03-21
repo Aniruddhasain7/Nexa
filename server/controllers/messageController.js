@@ -16,7 +16,9 @@ export const textMessageController = async (req, res) => {
       timestamp: Date.now(),
       isImage: false,
     });
-
+    if (chat.name === "New Chat") {
+  chat.name = prompt.slice(0, 30); 
+}
     const { choices } = await openai.chat.completions.create({
       model: "gemini-3-flash-preview",
       messages: [
@@ -56,6 +58,9 @@ export const imageMessageController = async (req, res) => {
       timestamp: Date.now(),
       isImage: false,
     });
+    if (chat.name === "New Chat") {
+  chat.name = prompt.slice(0, 30);
+}
 
     const encodedPrompt = encodeURIComponent(prompt);
 
