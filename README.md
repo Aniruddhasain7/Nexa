@@ -73,7 +73,6 @@ Built using **MERN Stack + AI APIs + ImageKit**, Nexa provides a modern ChatGPT-
 
 * 🔥 Real-time streaming responses
 * 🧠 Better AI memory (RAG)
-* ❤️ Like & comment system on images
 * 📱 Mobile optimization
 * 📤 Share chats/images
 
