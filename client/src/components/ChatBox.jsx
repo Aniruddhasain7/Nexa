@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 const Chatbot = () => {
 
   const containerRef=useRef(null)
+  const abortControllerRef=useRef(null)
 
   const {selectedChat, theme, user, axios, token, setUser, fetchUserChats}=useAppContext()
 
@@ -26,8 +27,10 @@ const Chatbot = () => {
         setPrompt('')
         setMessages(prev => [...prev, {role: 'user', content: prompt, timestamp:
         Date.now(), isImage: false }])
+        abortControllerRef.current = new AbortController()
         const {data}=await axios.post(`/api/message/${mode}`, {chatId: 
-        selectedChat._id, prompt, isPublished},{headers: { Authorization: `Bearer ${token}` }})
+        selectedChat._id, prompt, isPublished},{headers: { Authorization: `Bearer ${token}` },
+        signal: abortControllerRef.current.signal})
         if(data.success){
           setMessages(prev => [...prev, data.reply])
           await fetchUserChats()
@@ -37,10 +40,18 @@ const Chatbot = () => {
           setPrompt(promptCopy)
         }
     } catch (error) {
+      if(error.name === 'CanceledError' || error.name === 'AbortError') return
       toast.error(error.message)
     }finally{
       setPrompt('')
       setLoading(false)
+      abortControllerRef.current = null
+    }
+  }
+
+  const onStop = () => {
+    if(abortControllerRef.current){
+      abortControllerRef.current.abort()
     }
   }
 
@@ -100,9 +111,14 @@ const Chatbot = () => {
          </select>
          <input onChange={(e)=>setPrompt(e.target.value)} value={prompt} type='text' placeholder='Type your prompt here...' className='flex-1 w-full
          text-sm outline-none' required/>
-         <button disabled={loading}>
-          <img src={loading ? assets.stop_icon : assets.send_icon} className='w-8 cursor-pointer' alt="" />
-         </button>
+         {loading
+           ? <button type='button' onClick={onStop}>
+               <img src={assets.stop_icon} className='w-8 cursor-pointer' alt="stop" />
+             </button>
+           : <button type='submit'>
+               <img src={assets.send_icon} className='w-8 cursor-pointer' alt="send" />
+             </button>
+         }
       </form>
     </div>
   )
