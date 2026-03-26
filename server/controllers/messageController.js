@@ -4,21 +4,15 @@ import imagekit from "../configs/imagekit.js";
 import openai from "../configs/openai.js";
 
 export const textMessageController = async (req, res) => {
+  let clientDisconnected = false;
+  req.on('close', () => { clientDisconnected = true; });
+
   try {
     const userId = req.user._id;
     const { chatId, prompt } = req.body;
 
     const chat = await Chat.findOne({ userId, _id: chatId });
 
-    chat.messages.push({
-      role: "user",
-      content: prompt,
-      timestamp: Date.now(),
-      isImage: false,
-    });
-    if (chat.name === "New Chat") {
-  chat.name = prompt.slice(0, 30); 
-}
     const { choices } = await openai.chat.completions.create({
       model: "gemini-3-flash-preview",
       messages: [
@@ -28,6 +22,19 @@ export const textMessageController = async (req, res) => {
         },
       ],
     });
+
+    // If client aborted while AI was generating, don't save anything
+    if (clientDisconnected) return;
+
+    chat.messages.push({
+      role: "user",
+      content: prompt,
+      timestamp: Date.now(),
+      isImage: false,
+    });
+    if (chat.name === "New Chat") {
+      chat.name = prompt.slice(0, 30);
+    }
 
     const reply = {
       role: "assistant",

@@ -40,7 +40,10 @@ const Chatbot = () => {
           setPrompt(promptCopy)
         }
     } catch (error) {
-      if(error.name === 'CanceledError' || error.name === 'AbortError') return
+      if(error.name === 'CanceledError' || error.name === 'AbortError') {
+        setMessages(prev => prev.slice(0, -1)) // roll back the optimistic user message
+        return
+      }
       toast.error(error.message)
     }finally{
       setPrompt('')
