@@ -113,7 +113,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
             <input onChange={()=> setTheme(theme === 'dark' ? 'light' : 'dark')}
              type="checkbox" className="sr-only peer" checked={theme === 'dark'} />
              <div className="w-9 h-5 bg-gray-400 rounded-full
-             peer-checked:bg-cyan-600 transition-all">
+             peer-checked:bg-cyan-400 transition-all">
              </div>
              <span className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full
              transition-transform peer-checked:translate-x-4"></span>
