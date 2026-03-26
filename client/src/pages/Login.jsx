@@ -37,7 +37,7 @@ const Login = () =>{
       bg-white/5 backdrop-blur-xl"
     >
       <p className="text-2xl font-medium m-auto">
-        <span className="text-blue-400">User</span>{" "}
+        <span className="text-cyan-400">User</span>{" "}
         {state === "login" ? "Login" : "Sign Up"}
       </p>
 
@@ -49,7 +49,7 @@ const Login = () =>{
             value={name}
             placeholder="Name"
             className="border border-white/10 bg-white/5 text-white placeholder-gray-500
-            rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
+            rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-cyan-500"
             type="text"
             required
           />
@@ -63,7 +63,7 @@ const Login = () =>{
           value={email}
           placeholder="Email id"
           className="border border-white/10 bg-white/5 text-white placeholder-gray-500
-          rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
+          rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-cyan-500"
           type="email"
           required
         />
@@ -76,7 +76,7 @@ const Login = () =>{
           value={password}
           placeholder="Password"
           className="border border-white/10 bg-white/5 text-white placeholder-gray-500
-          rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-blue-500"
+          rounded w-full p-2 mt-1 outline-none focus:ring-2 focus:ring-cyan-500"
           type="password"
           required
         />
@@ -87,7 +87,7 @@ const Login = () =>{
           Already have account?{" "}
           <span
             onClick={() => setState("login")}
-            className="text-blue-400 cursor-pointer"
+            className="text-cyan-400 cursor-pointer"
           >
             click here
           </span>
@@ -97,7 +97,7 @@ const Login = () =>{
           Create an account?{" "}
           <span
             onClick={() => setState("register")}
-            className="text-blue-400 cursor-pointer"
+            className="text-cyan-400 cursor-pointer"
           >
             click here
           </span>
@@ -106,7 +106,7 @@ const Login = () =>{
 
       <button
         type="submit"
-        className="bg-blue-500 hover:bg-blue-600 transition-all
+        className="bg-cyan-500 hover:bg-cyan-600 transition-all
         text-white w-full py-2 rounded-md cursor-pointer"
       >
         {state === "register" ? "Create Account" : "Login"}
