@@ -20,7 +20,7 @@ const App = () => {
   return (
     <>
     <Toaster />
-    {!isMenuOpen && <img src={assets.menu_icon} className="absolute top-3 left-3
+    {user && !isMenuOpen && <img src={assets.menu_icon} className="absolute top-3 left-3
     w-8 h-8 cursor-pointer md:hidden not-dark:invert" onClick={()=> setIsMenuOpen
       (true)}/>}
 
