@@ -95,6 +95,8 @@ Nexa/
 │   ├── server.js            # Entry point
 │   └── package.json
 │
+├── ss1.png                  # Login page screenshot
+├── ss2.png                  # Home page screenshot
 └── README.md
 ```
 
