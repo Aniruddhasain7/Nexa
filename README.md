@@ -1,7 +1,7 @@
 # 🚀 Nexa — Intelligent AI Assistant
 
 <p align="center">
-  <img src="ss2.png" alt="Nexa - Home Page" width="100%" style="border-radius: 12px;" />
+  <img src="ss1.png" alt="Nexa - Home Page" width="100%" style="border-radius: 12px;" />
 </p>
 
 Nexa is a **full-stack AI-powered chatbot application** that lets users chat with an AI, generate stunning images from prompts, and explore a community feed of AI-generated creations.
@@ -13,13 +13,13 @@ Built with the **MERN Stack + Gemini AI + ImageKit**, Nexa delivers a modern, Ch
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="ss1.png" alt="Nexa - Login Page" width="48%" />
+  <img src="ss2.png" alt="Nexa - Login Page" width="48%" />
   &nbsp;&nbsp;
-  <img src="ss2.png" alt="Nexa - Home Page" width="48%" />
+  <img src="ss1.png" alt="Nexa - Home Page" width="48%" />
 </p>
 
-| | |
-|:---:|:---:|
+|               |              |
+| :-----------: | :----------: |
 | 🔐 Login Page | 🏠 Home Page |
 
 ---
