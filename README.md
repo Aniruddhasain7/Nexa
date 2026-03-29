@@ -18,10 +18,6 @@ Built with the **MERN Stack + Gemini AI + ImageKit**, Nexa delivers a modern, Ch
   <img src="ss1.png" alt="Nexa - Home Page" width="48%" />
 </p>
 
-|               |              |
-| :-----------: | :----------: |
-| 🔐 Login Page | 🏠 Home Page |
-
 ---
 
 ## 🌟 Features
@@ -95,8 +91,6 @@ Nexa/
 │   ├── server.js            # Entry point
 │   └── package.json
 │
-├── ss1.png                  # Login page screenshot
-├── ss2.png                  # Home page screenshot
 └── README.md
 ```
 
