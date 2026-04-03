@@ -13,9 +13,8 @@ Built with the **MERN Stack + Gemini AI + ImageKit**, Nexa delivers a modern, Ch
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="./assets/ss2.png" alt="Nexa - Login Page" width="48%" />
-  &nbsp;&nbsp;
-  <img src="./assets/ss1.png" alt="Nexa - Home Page" width="48%" />
+  <img src="./assets/ss2.png" alt="Nexa - Login Page" width="400" />
+  <img src="./assets/ss1.png" alt="Nexa - Home Page" width="400" />
 </p>
 
 ---
