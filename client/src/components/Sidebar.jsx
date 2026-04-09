@@ -59,7 +59,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           type="text"
-          placeholder="Search conservation"
+          placeholder="Search conversation"
           className="text-xs placeholder:text-gray-400 outline-none"
         />
       </div>
