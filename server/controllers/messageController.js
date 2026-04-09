@@ -23,7 +23,7 @@ export const textMessageController = async (req, res) => {
       ],
     });
 
-    // If client aborted while AI was generating, don't save anything
+    
     if (clientDisconnected) return;
 
     chat.messages.push({
