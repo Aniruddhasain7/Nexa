@@ -5,7 +5,7 @@ import { useAppContext } from '../context/AppContext'
 const Loading = () => {
 
   const navigate=useNavigate()
-  const {fetchUser}=useAppContext
+  const {fetchUser}=useAppContext()
   useEffect(()=>{
     const timeout=setTimeout(()=>{
       fetchUser()

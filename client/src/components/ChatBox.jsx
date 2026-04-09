@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext'
 import { assets } from '../assets/assets'
 import Message from './Message'
 import toast from 'react-hot-toast'
+import { FaMicrophone } from "react-icons/fa6"
 
 
 const Chatbot = () => {
@@ -18,37 +19,95 @@ const Chatbot = () => {
   const [prompt, setPrompt]=useState('')
   const [mode, setMode]=useState('text')
   const [isPublished, setIsPublished]=useState(false)
-  const onSubmit = async (e) => {   
-    try {
-      e.preventDefault()
-      if(!user) return toast('Login to send message')
-        setLoading(true)
-        const promptCopy=prompt
-        setPrompt('')
-        setMessages(prev => [...prev, {role: 'user', content: prompt, timestamp:
-        Date.now(), isImage: false }])
-        abortControllerRef.current = new AbortController()
-        const {data}=await axios.post(`/api/message/${mode}`, {chatId: 
-        selectedChat._id, prompt, isPublished},{headers: { Authorization: `Bearer ${token}` },
-        signal: abortControllerRef.current.signal})
-        if(data.success){
-          setMessages(prev => [...prev, data.reply])
-          await fetchUserChats()
+  const [isRecording, setIsRecording] = useState(false)
+  const sendMessage = async (inputPrompt) => {
+    const textToSend = inputPrompt || prompt
+    if(!textToSend.trim()) return
 
-        } else {
-          toast.error(data.message)
-          setPrompt(promptCopy)
-        }
+    try {
+      if(!user) return toast('Login to send message')
+      setLoading(true)
+      const promptCopy = textToSend
+      setPrompt('')
+      
+      setMessages(prev => [...prev, {role: 'user', content: textToSend, timestamp: Date.now(), isImage: false }])
+      
+      abortControllerRef.current = new AbortController()
+      const {data}=await axios.post(`/api/message/${mode}`, {
+        chatId: selectedChat._id, 
+        prompt: textToSend, 
+        isPublished
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+        signal: abortControllerRef.current.signal
+      })
+
+      if(data.success){
+        setMessages(prev => [...prev, data.reply])
+        await fetchUserChats()
+      } else {
+        toast.error(data.message)
+        setPrompt(promptCopy)
+      }
     } catch (error) {
       if(error.name === 'CanceledError' || error.name === 'AbortError') {
-        setMessages(prev => prev.slice(0, -1)) // roll back the optimistic user message
+        setMessages(prev => prev.slice(0, -1)) 
         return
       }
       toast.error(error.message)
-    }finally{
-      setPrompt('')
+    } finally {
       setLoading(false)
       abortControllerRef.current = null
+    }
+  }
+
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    sendMessage()
+  }
+
+  const toggleRecording = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+
+    if (!SpeechRecognition) {
+      return toast.error("Speech recognition is not supported in this browser.")
+    }
+
+    const recognition = new SpeechRecognition()
+    recognition.lang = 'en-US'
+    recognition.interimResults = true
+
+    recognition.onstart = () => {
+      setIsRecording(true)
+    }
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join('')
+
+      setPrompt(transcript)
+
+      if (event.results[0].isFinal) {
+        recognition.stop()
+        sendMessage(transcript)
+      }
+    }
+
+    recognition.onerror = (event) => {
+      toast.error("Speech recognition error: " + event.error)
+      setIsRecording(false)
+    }
+
+    recognition.onend = () => {
+      setIsRecording(false)
+    }
+
+    if (isRecording) {
+      recognition.stop()
+    } else {
+      recognition.start()
     }
   }
 
@@ -113,7 +172,16 @@ const Chatbot = () => {
             <option className='dark:bg-gray-900' value='image'>Image</option>
          </select>
          <input onChange={(e)=>setPrompt(e.target.value)} value={prompt} type='text' placeholder='Type your prompt here...' className='flex-1 w-full
-         text-sm outline-none' required/>
+         text-sm outline-none bg-transparent' required/>
+
+         <button 
+           type='button' 
+           onClick={toggleRecording}
+           className={`p-2 rounded-full transition-all ${isRecording ? 'text-white animate-pulse bg-[#00E5FF]' : 'text-gray-500 hover:text-primary'}`}
+         >
+           <FaMicrophone size={20} />
+         </button>
+
          {loading
            ? <button type='button' onClick={onStop}>
                <img src={assets.stop_icon} className='w-8 cursor-pointer' alt="stop" />

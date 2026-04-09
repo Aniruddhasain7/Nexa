@@ -45,6 +45,14 @@ Built with the **MERN Stack + Gemini AI + ImageKit**, Nexa delivers a modern, Ch
 - Password hashing with **bcrypt**
 - Protected routes on both frontend and backend
 
+### 🎙️ Voice Input
+
+- Speak your prompts — no typing needed
+- Powered by the **Web Speech API** (SpeechRecognition)
+- Real-time interim transcription displayed as you speak
+- Automatically sends the message when speech ends
+- Graceful fallback with error toast for unsupported browsers
+
 ### 🎨 UI/UX
 
 - Modern dark-themed design

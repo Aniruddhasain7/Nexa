@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
-import axios from 'axios'
+import Input from "../components/Input";
 
 
 const Login = () =>{
@@ -42,45 +42,33 @@ const Login = () =>{
       </p>
 
       {state === "register" && (
-        <div className="w-full">
-          <p className="text-gray-400">Name</p>
-          <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="Name"
-            className="border border-white/10 bg-white/5 text-white placeholder-gray-500
-            rounded-full w-full px-4 py-2 mt-1 outline-none focus:ring-2 focus:ring-[#00E5FF]"
-            type="text"
-            required
-          />
-        </div>
+        <Input
+          label="Name"
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+          placeholder="Name"
+          type="text"
+          required
+        />
       )}
 
-      <div className="w-full">
-        <p className="text-gray-400">Email</p>
-        <input
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-          placeholder="Email address"
-          className="border border-white/10 bg-white/5 text-white placeholder-gray-500
-          rounded-full w-full px-4 py-2 mt-1 outline-none focus:ring-2 focus:ring-[#00E5FF]"
-          type="email"
-          required
-        />
-      </div>
+      <Input
+        label="Email"
+        onChange={(e) => setEmail(e.target.value)}
+        value={email}
+        placeholder="Email address"
+        type="email"
+        required
+      />
 
-      <div className="w-full">
-        <p className="text-gray-400">Password</p>
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          placeholder="Password"
-          className="border border-white/10 bg-white/5 text-white placeholder-gray-500
-          rounded-full w-full px-4 py-2 mt-1 outline-none focus:ring-2 focus:ring-[#00E5FF]"
-          type="password"
-          required
-        />
-      </div>
+      <Input
+        label="Password"
+        onChange={(e) => setPassword(e.target.value)}
+        value={password}
+        placeholder="Password"
+        type="password"
+        required
+      />
 
       {state === "register" ? (
         <p className="text-gray-400">
