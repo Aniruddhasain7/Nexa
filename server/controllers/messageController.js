@@ -14,7 +14,7 @@ export const textMessageController = async (req, res) => {
     const chat = await Chat.findOne({ userId, _id: chatId });
 
     const { choices } = await openai.chat.completions.create({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash-lite",
       messages: [
         {
           role: "user",
