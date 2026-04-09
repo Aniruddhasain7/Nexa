@@ -84,22 +84,22 @@ const Login = () =>{
 
       {state === "register" ? (
         <p className="text-gray-400">
-          Already have account?{" "}
+          Already have an account?{" "}
           <span
             onClick={() => setState("login")}
-            className="bg-gradient-to-r from-[#00E5FF] to-[#0096FF] bg-clip-text text-transparent cursor-pointer"
+            className="bg-gradient-to-r from-[#00E5FF] to-[#0096FF] bg-clip-text text-transparent cursor-pointer underline"
           >
-            click here
+            Login
           </span>
         </p>
       ) : (
         <p className="text-gray-400">
-          Create an account?{" "}
+          Don't have an account?{" "}
           <span
             onClick={() => setState("register")}
-            className="bg-gradient-to-r from-[#00E5FF] to-[#0096FF] bg-clip-text text-transparent cursor-pointer"
+            className="bg-gradient-to-r from-[#00E5FF] to-[#0096FF] bg-clip-text text-transparent cursor-pointer underline"
           >
-            click here
+            SignUp
           </span>
         </p>
       )}
