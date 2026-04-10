@@ -74,7 +74,6 @@ const Chatbot = () => {
     }
 
     const recognition = new SpeechRecognition()
-    recognition.lang = 'en-US'
     recognition.interimResults = true
 
     recognition.onstart = () => {
@@ -177,7 +176,7 @@ const Chatbot = () => {
          <button 
            type='button' 
            onClick={toggleRecording}
-           className={`p-2 rounded-full transition-all ${isRecording ? 'text-white animate-pulse bg-[#00E5FF]' : 'text-gray-500 hover:text-primary'}`}
+           className={`p-2 rounded-full transition-all ${isRecording ? 'text-white animate-pulse bg-gradient-to-r from-[#00E5FF] to-[#0096FF]' : 'text-gray-500 hover:text-primary'}`}
          >
            <FaMicrophone size={20} />
          </button>
