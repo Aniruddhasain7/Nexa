@@ -47,10 +47,10 @@ Built with the **MERN Stack + Gemini AI + ImageKit**, Nexa delivers a modern, Ch
 
 ### 🎙️ Voice Input
 
-- Speak your prompts — no typing needed
+- Speak your prompts with a single click using the microphone button
+- Pulsing animated UI indicator while active
+- Automatically sends the recorded message when you finish speaking
 - Powered by the **Web Speech API** (SpeechRecognition)
-- Real-time interim transcription displayed as you speak
-- Automatically sends the message when speech ends
 - Graceful fallback with error toast for unsupported browsers
 
 ### 🎨 UI/UX
