@@ -61,7 +61,7 @@ Built with the **MERN Stack + Gemini AI + ImageKit**, Nexa delivers a modern, Ch
 
 ---
 
-## Use Case Diagram
+## 📊 Use Case Diagram
 
 Here is a comprehensive Use Case Diagram for the Nexa Application, detailing the interactions between the User, the system's core features, and its external integrations (Gemini AI & ImageKit).
 
@@ -120,10 +120,10 @@ flowchart LR
     UC_Feed -.->|Reads posts from| DB
 
     %% Styling
-    classDef actor fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#000;
-    classDef external fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000;
-    classDef usecase fill:#ffffff,stroke:#4caf50,stroke-width:2px,color:#000;
-    classDef db fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000;
+    classDef actor fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff;
+    classDef external fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff;
+    classDef usecase fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff;
+    classDef db fill:#000000,stroke:#ffffff,stroke-width:2px,color:#ffffff;
 
     class User,Guest actor;
     class Gemini,ImageKit external;
