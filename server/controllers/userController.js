@@ -9,6 +9,23 @@ const generateToken=(id)=>{
     })
 }
 
+export const googleAuth = async (req, res) => {
+    const { name, email, googleId } = req.body;
+    try {
+        let user = await User.findOne({ email });
+        if (!user) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(googleId + process.env.JWT_SECRET, salt);
+            user = await User.create({ name, email, password: hashedPassword });
+        }
+        
+        const token = generateToken(user._id);
+        res.json({ success: true, token });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}
+
 export const registerUser=async (req, res)=>{
     const { name, email, password }=req.body;
 

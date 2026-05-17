@@ -34,7 +34,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
   }
   return (
     <div
-      className={`flex flex-col h-screen min-w-72 p-5 dark:bg-gradient-to-b from-[#242124}/30 to-[#000000}/30 border-r
+      className={`flex flex-col h-screen min-w-72 p-5 dark:bg-linear-to-b from-[#242124]/30 to-[#000000]/30 border-r
     border-[#80609F]/30 backdrop-blur-3xl transition-all duration-500 max-md:absolute left-0 z-1 ${!isMenuOpen &&
     'max-md:-translate-x-full'}`}
     >
@@ -45,7 +45,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
       />
       <button onClick={createNewChat} 
         className="flex justify-center items-center w-full py-2 mt-10
-      text-white bg-gradient-to-r from-[#00E5FF] to-[#0096FF] text-sm rounded-md
+      text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF] text-sm rounded-md
       cursor-pointer"
       >
         <span className="mr-2 text-xl">+</span>New Chat
@@ -59,7 +59,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           type="text"
-          placeholder="Search conservation"
+          placeholder="Search conversation"
           className="text-xs placeholder:text-gray-400 outline-none"
         />
       </div>
@@ -113,7 +113,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
             <input onChange={()=> setTheme(theme === 'dark' ? 'light' : 'dark')}
              type="checkbox" className="sr-only peer" checked={theme === 'dark'} />
              <div className="w-9 h-5 bg-gray-400 rounded-full
-             peer-checked:bg-blue-600 transition-all">
+             peer-checked:bg-linear-to-r peer-checked:from-[#00E5FF] peer-checked:to-[#0096FF] transition-all">
              </div>
              <span className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full
              transition-transform peer-checked:translate-x-4"></span>
@@ -121,7 +121,13 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
       </div>  
         <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300
       dark:border-white/15 rounded-md cursor-pointer group">
-          <img src={assets.user_icon} className="w-7 rounded-full" alt='' />
+          {user ? (
+            <div className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white text-sm font-semibold">
+              {user.name.charAt(0)}
+            </div>
+          ) : (
+            <img src={assets.user_icon} className="w-7 rounded-full" alt="" />
+          )}
           <p className="flex-1 text-sm dark:text-gray-100 truncate">{user ? user.name :
            'Login your account' }</p>
            {user && <img onClick={logout} src={assets.logout_icon} className="h-5 cursor-pointer hidden
