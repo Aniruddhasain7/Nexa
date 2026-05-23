@@ -217,12 +217,8 @@ Nexa/
 
 ## 🔮 Future Roadmap
 
-- [ ] **Real-time Streaming** — Server-Sent Events (SSE) for live AI response streaming
-- [ ] **RAG Integration** — Knowledge-based AI memory using Retrieval-Augmented Generation
-- [ ] **Social Features** — Comment and like creations in the Community Feed
-- [ ] **Share Chats** — Share individual conversations via public links
-- [ ] **Mobile App** — Dedicated mobile application using React Native
-
----
-
-<p align="center">Made with ❤️ by Aniruddha</p>
+- ⚡ **Real-time Streaming** — Server-Sent Events (SSE) for live AI response streaming
+- 🧠 **RAG Integration** — Knowledge-based AI memory using Retrieval-Augmented Generation
+- 💬 **Social Features** — Comment and like creations in the Community Feed
+- 🔗 **Share Chats** — Share individual conversations via public links
+- 📱 **Mobile App** — Dedicated mobile application using React Native
