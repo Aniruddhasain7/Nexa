@@ -87,7 +87,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                 <p className="text-xs text-gray-500 dark:text-[#B1A6C0]">
                   {moment(chat.updatedAt).fromNow()}</p>
               </div>
-              <img src={assets.bin_icon} className="hidden group-hover:block
+              <img src={assets.bin_icon} className="block md:hidden md:group-hover:block
               w-4 cursor-pointer not-dark:invert" alt=""
               onClick={e=> toast.promise(deleteChat(e, chat._id),{
                 loading:'deleting...' })}/>
@@ -130,8 +130,8 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
           )}
           <p className="flex-1 text-sm dark:text-gray-100 truncate">{user ? user.name :
            'Login your account' }</p>
-           {user && <img onClick={logout} src={assets.logout_icon} className="h-5 cursor-pointer hidden
-           not-dark:invert group-hover:block"/>}
+           {user && <img onClick={logout} src={assets.logout_icon} className="h-5 cursor-pointer block md:hidden
+           not-dark:invert md:group-hover:block"/>}
       </div>    
       <img onClick={()=> setIsMenuOpen(false)} src={assets.close_icon} className="absolute top-3 right-3 w-5 h-5
       cursor-pointer md:hidden not-dark:invert" alt="" />
