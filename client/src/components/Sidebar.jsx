@@ -9,6 +9,8 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
   const { chats, setSelectedChat, theme, setTheme, user, navigate, createNewChat,
     axios, setChats, fetchUserChats, setToken, token } = useAppContext();
   const [search, setSearch] = useState("");
+  const [activeChatActionsId, setActiveChatActionsId] = useState(null);
+  const [showLogoutMobile, setShowLogoutMobile] = useState(false);
 
   const logout = () => {
     localStorage.removeItem('token')
@@ -75,8 +77,21 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
               : chat.name.toLowerCase().includes(search.toLowerCase()),
           )
           .map((chat) => (
-            <div onClick={()=> {navigate('/'); setSelectedChat(chat); 
-              setIsMenuOpen(false)}} 
+            <div onClick={()=> {
+              if (window.innerWidth < 768) {
+                if (activeChatActionsId !== chat._id) {
+                  setActiveChatActionsId(chat._id);
+                } else {
+                  navigate('/');
+                  setSelectedChat(chat);
+                  setIsMenuOpen(false);
+                  setActiveChatActionsId(null);
+                }
+              } else {
+                navigate('/');
+                setSelectedChat(chat);
+              }
+            }} 
             key={chat._id} className="p-2 px-4 dark:bg-[#31407c]/10 border
             border-gray-300 dark:border-[#60899f]/15 rounded-md cursor-pointer flex justify-between group">
               <div>
@@ -87,10 +102,15 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                 <p className="text-xs text-gray-500 dark:text-[#B1A6C0]">
                   {moment(chat.updatedAt).fromNow()}</p>
               </div>
-              <img src={assets.bin_icon} className="block md:hidden md:group-hover:block
-              w-4 cursor-pointer not-dark:invert" alt=""
-              onClick={e=> toast.promise(deleteChat(e, chat._id),{
-                loading:'deleting...' })}/>
+              <img src={assets.bin_icon} className={`w-4 cursor-pointer not-dark:invert ${
+                activeChatActionsId === chat._id ? 'block' : 'hidden md:group-hover:block'
+              }`} alt=""
+              onClick={e=> {
+                e.stopPropagation();
+                toast.promise(deleteChat(e, chat._id), {
+                  loading:'deleting...'
+                });
+              }}/>
             </div>
           ))}
       </div>
@@ -119,7 +139,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
              transition-transform peer-checked:translate-x-4"></span>
           </label>
       </div>  
-        <div className="flex items-center gap-3 p-3 mt-4 border border-gray-300
+        <div onClick={() => setShowLogoutMobile(prev => !prev)} className="flex items-center gap-3 p-3 mt-4 border border-gray-300
       dark:border-white/15 rounded-md cursor-pointer group">
           {user ? (
             <div className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white text-sm font-semibold">
@@ -130,8 +150,9 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
           )}
           <p className="flex-1 text-sm dark:text-gray-100 truncate">{user ? user.name :
            'Login your account' }</p>
-           {user && <img onClick={logout} src={assets.logout_icon} className="h-5 cursor-pointer block md:hidden
-           not-dark:invert md:group-hover:block"/>}
+           {user && <img onClick={(e) => { e.stopPropagation(); logout(); }} src={assets.logout_icon} className={`h-5 cursor-pointer not-dark:invert ${
+             showLogoutMobile ? 'block' : 'hidden md:group-hover:block'
+           }`}/>}
       </div>    
       <img onClick={()=> setIsMenuOpen(false)} src={assets.close_icon} className="absolute top-3 right-3 w-5 h-5
       cursor-pointer md:hidden not-dark:invert" alt="" />
