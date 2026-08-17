@@ -14,9 +14,11 @@ export const googleAuth = async (req, res) => {
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(googleId + process.env.JWT_SECRET, salt);
-            user = await User.create({ name, email, password: hashedPassword });
+            user = await User.create({ 
+                name, 
+                email, 
+                password: googleId + (process.env.JWT_SECRET || 'nexa_secret') 
+            });
         }
         
         const token = generateToken(user._id);

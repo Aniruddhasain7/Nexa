@@ -39,7 +39,7 @@ Built with the **MERN Stack** (React 19, Express.js 5, Node.js, MongoDB), **Gemi
 ### 📤 Multimodal Media & File Analysis
 
 - 📷 **Image Analysis**: Upload images (`.jpeg`, `.png`, `.gif`, `.webp`, `.svg`) for visual AI context & processing via **Gemini Vision**.
-- 📄 **PDF Document Analysis**: Upload **PDF (`.pdf`)** files for server-side text extraction using `pdf-parse`, multi-page parsing, and AI summarization/Q&A.
+- 📄 **PDF Document Analysis**: Upload **PDF (`.pdf`)** files for serverless-safe text extraction using **`unpdf`**, multi-page parsing, and AI summarization/Q&A.
 - 📝 **Plain Text Documents**: Upload `.txt` files with automated context injection into AI prompts.
 - 🎥 **Video File Support**: Upload videos (`.mp4`, `.webm`, `.ogg`) viewable directly in chat with media URL awareness.
 - ⚡ **20 MB File Limit**: Enforced server-side in-memory upload limit via Multer middleware.
@@ -70,9 +70,9 @@ flowchart TD
     end
 
     %% ── Tier 2: Server Layer ──────────────────────────────
-    subgraph Tier2 ["⚙️ Application Layer (Backend API - Express.js 5 / Node.js)"]
+    subgraph Tier2 ["⚙️ Application Layer (Backend API - Express.js 5 / Node.js / Vercel Serverless)"]
         direction TB
-        Server["🚀 Express Server (server.js)"]
+        Server["🚀 Express Server (server.js / api/index.js)"]
         AuthMW["🔒 Auth Middleware (JWT Verification)"]
         MulterMW["📁 Multer Middleware (Media & PDF Upload)"]
 
@@ -90,7 +90,7 @@ flowchart TD
         GeminiAI["🧠 Gemini AI API\n(gemini-3.5-flash Model)"]
         ImageKit["🖼️ ImageKit CDN & AI Gen\n(Media Uploads & AI Image Prompting)"]
         FirebaseAuth["🔥 Firebase OAuth Service"]
-        PdfParser["📄 pdf-parse Library\n(PDF Text Extraction)"]
+        PdfParser["📄 unpdf Engine\n(Serverless PDF Text Extraction)"]
     end
 
     %% ── Connections: Client -> Server ──────────────────────
@@ -133,18 +133,18 @@ flowchart TD
 
 ### 🎭 Component Responsibilities
 
-| Tier                   | Component                           | Description & Responsibilities                                                                                                                              |
-| :--------------------- | :---------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Client Layer**       | **React 19 Frontend**               | SPA built with Vite & Tailwind CSS v4. Handles user sessions, Web Speech voice recognition, markdown rendering with syntax highlighting, and media uploads. |
-|                        | **Firebase Client SDK**             | Manages Google OAuth popups and extracts ID tokens for backend authentication.                                                                              |
-| **Application Layer**  | **Express API Gateway**             | Central Node.js server handling route dispatching (`/api/user`, `/api/chat`, `/api/message`), CORS, and environment configuration.                          |
-|                        | **Auth Middleware (`auth.js`)**     | Validates Bearer JWT tokens on protected routes and attaches the authenticated user instance to `req.user`.                                                 |
-|                        | **Multer Middleware (`upload.js`)** | Intercepts multipart file uploads in memory (images, PDFs, text, videos) up to 20MB.                                                                        |
-|                        | **Message Controller**              | Orchestrates text LLM completions with Gemini AI, generates AI art via ImageKit, processes vision payloads, and parses PDF documents using `pdf-parse`.     |
-| **Data & Cloud Layer** | **MongoDB (Mongoose)**              | Stores user profile data, hashed credentials, structured chat sessions, and message logs.                                                                   |
-|                        | **Gemini AI API**                   | Generates response completions and analyzes visual/document context using the `gemini-3.5-flash` model.                                                     |
-|                        | **ImageKit CDN**                    | Executes dynamic AI image generation prompts, stores uploaded media assets, and delivers optimized CDN media.                                               |
-|                        | **`pdf-parse` Engine**              | Extracts raw text and metadata from uploaded PDF buffers on the server.                                                                                     |
+| Tier                   | Component                           | Description & Responsibilities                                                                                                                                                  |
+| :--------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Client Layer**       | **React 19 Frontend**               | SPA built with Vite & Tailwind CSS v4. Handles user sessions, Web Speech voice recognition, markdown rendering with syntax highlighting, and media uploads.                     |
+|                        | **Firebase Client SDK**             | Manages Google OAuth popups and extracts ID tokens for backend authentication.                                                                                                  |
+| **Application Layer**  | **Express API Gateway**             | Central Node.js server handling route dispatching (`/api/user`, `/api/chat`, `/api/message`), CORS, and environment configuration. Compatible with Vercel serverless functions. |
+|                        | **Auth Middleware (`auth.js`)**     | Validates Bearer JWT tokens on protected routes and attaches the authenticated user instance to `req.user`.                                                                     |
+|                        | **Multer Middleware (`upload.js`)** | Intercepts multipart file uploads in memory (images, PDFs, text, videos) up to 20MB.                                                                                            |
+|                        | **Message Controller**              | Orchestrates text LLM completions with Gemini AI, generates AI art via ImageKit, processes vision payloads, and parses PDF documents using `unpdf`.                             |
+| **Data & Cloud Layer** | **MongoDB (Mongoose)**              | Stores user profile data, hashed credentials, structured chat sessions, and message logs.                                                                                       |
+|                        | **Gemini AI API**                   | Generates response completions and analyzes visual/document context using the `gemini-3.5-flash` model.                                                                         |
+|                        | **ImageKit CDN**                    | Executes dynamic AI image generation prompts, stores uploaded media assets, and delivers optimized CDN media.                                                                   |
+|                        | **`unpdf` Engine**                  | Serverless-safe text extraction and metadata extraction from uploaded PDF buffers without native OS dependencies.                                                               |
 
 ---
 
@@ -173,7 +173,7 @@ flowchart TD
 3. **Backend Server** uploads the file to ImageKit (`nexa/uploads`) to secure a permanent CDN media URL.
 4. **Context Processing**:
    - **Images**: Formats a vision payload array containing image URL and prompt.
-   - **PDFs**: Parses `file.buffer` using `pdf-parse`, extracts document text and page count, and injects up to 15,000 characters of text into the Gemini prompt.
+   - **PDFs**: Parses `file.buffer` using `unpdf`, extracts document text and page count, and injects up to 15,000 characters of text into the Gemini prompt.
    - **Text Files**: Reads UTF-8 contents directly from `file.buffer` and appends up to 10,000 characters to the prompt.
    - **Videos & Others**: Injects media URL context into the Gemini prompt.
 5. **Gemini AI** processes the multimodal request and returns a detailed completion, stored in MongoDB and returned to the client interface.
@@ -229,12 +229,12 @@ flowchart TD
 
 | Category                | Technology                                   |
 | :---------------------- | :------------------------------------------- |
-| **Runtime Environment** | Node.js                                      |
+| **Runtime Environment** | Node.js (ES Modules)                         |
 | **Framework**           | Express.js v5                                |
 | **Database**            | MongoDB (Mongoose v9)                        |
 | **Authentication**      | JSON Web Tokens (`jsonwebtoken`), `bcryptjs` |
 | **File Handling**       | Multer                                       |
-| **PDF Parsing**         | `pdf-parse`                                  |
+| **PDF Parsing**         | `unpdf` (Serverless-Safe WASM parser)        |
 | **AI Integration**      | OpenAI Node SDK (pointing to Gemini API)     |
 | **HTTP Client**         | Axios                                        |
 
@@ -256,23 +256,27 @@ Nexa/
 ├── client/                  # React frontend (Vite)
 │   ├── src/
 │   │   ├── assets/          # Static UI icons & images
-│   │   ├── components/      # UI components (ChatBox, Sidebar, Message, etc.)
+│   │   ├── components/      # UI components (ChatBox, Sidebar, Message, Input, etc.)
 │   │   ├── config/          # Firebase initialization
-│   │   ├── context/         # React Context state management
-│   │   ├── pages/           # Application pages (Chat, Community, Login)
+│   │   ├── context/         # React Context state management (AppContext.jsx)
+│   │   ├── pages/           # Application pages (Chat, Community, Login, Loading)
 │   │   ├── App.jsx          # Root component & routing
 │   │   └── main.jsx         # Entry point
 │   ├── public/
 │   ├── package.json
+│   ├── vercel.json          # Vercel SPA client rewrite configuration
 │   └── vite.config.js
 │
 ├── server/                  # Node.js backend
+│   ├── api/
+│   │   └── index.js         # Vercel serverless function entry point
 │   ├── configs/             # MongoDB, ImageKit & OpenAI SDK configs
 │   ├── controllers/         # userController, chatController, messageController
 │   ├── middlewares/         # auth.js (JWT verify), upload.js (Multer)
 │   ├── models/              # User.js, Chat.js Mongoose schemas
 │   ├── routes/              # userRoutes, chatRoutes, messageRoutes
 │   ├── server.js            # Express application entry point
+│   ├── vercel.json          # Vercel backend rewrite configuration
 │   └── package.json
 │
 └── README.md
@@ -299,7 +303,7 @@ Ensure you have the following installed on your machine:
 #### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Nexa.git
+git clone https://github.com/Aniruddhasain7/Nexa.git
 cd Nexa
 ```
 
@@ -347,7 +351,7 @@ cd Nexa
 
 ---
 
-### 🏃 Running the Application
+### 🏃 Running the Application Locally
 
 #### Start Backend Server
 

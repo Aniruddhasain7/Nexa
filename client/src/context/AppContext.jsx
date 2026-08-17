@@ -39,44 +39,49 @@ export const AppContextProvider = ({ children }) => {
 
   const createNewChat = async () => {
     try {
-      if (!user) return toast("Login to create a new Chat");
+      if (!token) return toast("Login to create a new Chat");
       navigate("/");
       const { data } = await axios.get("/api/chat/create", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (!data.success) {
-      return toast.error(data.message);
-    }
-      await fetchUserChats();
+      if (!data.success) {
+        return toast.error(data.message);
+      }
+      await fetchUserChats(false);
     } catch (error) {
       toast.error(error.message);
     }
   };
 
- const fetchUserChats = async () => {
-  try {
-    const { data } = await axios.get("/api/chat/get", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+  const fetchUserChats = async (autoCreate = true) => {
+    try {
+      if (!token) return;
+      const { data } = await axios.get("/api/chat/get", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (data.success) {
-      setChats(data.chats);
+      if (data.success) {
+        setChats(data.chats);
 
-      if (data.chats.length === 0) {
-        await createNewChat();
+        if (data.chats.length === 0) {
+          if (autoCreate) {
+            await createNewChat();
+          }
+        } else {
+          setSelectedChat((prev) => {
+            if (!prev) return data.chats[0];
+            const current = data.chats.find((c) => c._id === prev._id);
+            return current || data.chats[0];
+          });
+        }
       } else {
-        setSelectedChat(data.chats[0]);
+        toast.error(data.message);
       }
-
-    } else {
-      toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
     }
-
-  } catch (error) {
-    toast.error(error.message);
-  }
-};
+  };
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");

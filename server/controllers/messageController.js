@@ -2,10 +2,7 @@ import axios from "axios";
 import Chat from "../models/Chat.js";
 import imagekit from "../configs/imagekit.js";
 import openai from "../configs/openai.js";
-import { createRequire } from "module";
-
-const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse");
+import { extractText, getDocumentProxy } from "unpdf";
 
 const getMedType = (mime) => {
   if (mime.startsWith("image/")) return "image";
@@ -172,9 +169,10 @@ export const uploadMediaController = async (req, res) => {
       let pdfText = "";
       let numPages = 1;
       try {
-        const parsed = await pdfParse(file.buffer);
-        pdfText = parsed.text ? parsed.text.trim() : "";
-        numPages = parsed.numpages || 1;
+        const pdf = await getDocumentProxy(new Uint8Array(file.buffer));
+        const result = await extractText(pdf, { mergePages: true });
+        pdfText = (result.text || "").trim();
+        numPages = result.totalPages || 1;
       } catch (err) {
         console.error("PDF parse error:", err.message);
       }

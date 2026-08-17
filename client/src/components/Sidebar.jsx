@@ -21,22 +21,28 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
     toast.success('Logged out successfully')
   }
 
-  const deleteChat=async (e, chatId) => {
-      try {
-        e.stopPropagation()
-        const confirm=window.confirm('Are you sure you want to delete this chat?')
-        if(!confirm) return
-        const { data }=await axios.post('/api/chat/delete',{chatId},{
-        headers: { Authorization: `Bearer ${token}` }})
-        if(data.success){
-          setChats(prev => prev.filter(chat => chat._id !== chatId))
-          await fetchUserChats()
-          toast.success(data.message)
-        }
-      } catch (error) {
-        toast.error(error.message)
+  const deleteChat = async (e, chatId) => {
+    try {
+      e.stopPropagation();
+      const confirm = window.confirm('Are you sure you want to delete this chat?');
+      if (!confirm) return;
+
+      const { data } = await axios.post(
+        '/api/chat/delete',
+        { chatId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        setChats((prev) => prev.filter((chat) => chat._id !== chatId));
+        toast.success(data.message || 'Chat deleted');
+        await fetchUserChats();
+      } else {
+        toast.error(data.message);
       }
-  }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <div
       className={`flex flex-col h-screen min-w-72 p-5 dark:bg-linear-to-b from-[#242124]/30 to-[#000000]/30 border-r
@@ -111,12 +117,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                   activeChatActionsId === chat._id ? 'block' : 'hidden md:group-hover:block'
                 }`}
                 title="Delete chat"
-                onClick={e=> {
-                  e.stopPropagation();
-                  toast.promise(deleteChat(e, chat._id), {
-                    loading:'deleting...'
-                  });
-                }}
+                onClick={(e) => deleteChat(e, chat._id)}
               >
                 <FiTrash2 size={16} />
               </button>
