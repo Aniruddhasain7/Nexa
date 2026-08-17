@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
+import logo_full from "../assets/logo_full.png";
+import logo_full_dark from "../assets/logo_full_dark.png";
 import moment from 'moment'
 import toast from "react-hot-toast";
+import { FiSearch, FiTrash2, FiImage, FiSun, FiMoon, FiLogOut, FiX } from "react-icons/fi";
+import { FaUser } from "react-icons/fa";
 
 
 const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
@@ -41,7 +44,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
     'max-md:-translate-x-full'}`}
     >
       <img
-        src={theme === "dark" ? assets.logo_full : assets.logo_full_dark}
+        src={theme === "dark" ? logo_full : logo_full_dark}
         alt=""
         className="w-full max-w-48"
       />
@@ -56,13 +59,13 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
         className="flex items-center gap-2 p-3 mt-4 border border-gray-400
       dark:border-white/20 rounded-md"
       >
-        <img src={assets.search_icon} className="w-4 not-dark:invert" alt="" />
+        <FiSearch className="text-gray-400 text-base shrink-0" />
         <input
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           type="text"
           placeholder="Search conversation"
-          className="text-xs placeholder:text-gray-400 outline-none"
+          className="text-xs placeholder:text-gray-400 outline-none w-full bg-transparent"
         />
       </div>
       {chats.length > 0 && <p className="mt-4 text-sm">Recent Chats</p>}
@@ -102,15 +105,21 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                 <p className="text-xs text-gray-500 dark:text-[#B1A6C0]">
                   {moment(chat.updatedAt).fromNow()}</p>
               </div>
-              <img src={assets.bin_icon} className={`w-4 cursor-pointer not-dark:invert ${
-                activeChatActionsId === chat._id ? 'block' : 'hidden md:group-hover:block'
-              }`} alt=""
-              onClick={e=> {
-                e.stopPropagation();
-                toast.promise(deleteChat(e, chat._id), {
-                  loading:'deleting...'
-                });
-              }}/>
+              <button
+                type="button"
+                className={`p-1 text-gray-400 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors cursor-pointer shrink-0 ${
+                  activeChatActionsId === chat._id ? 'block' : 'hidden md:group-hover:block'
+                }`}
+                title="Delete chat"
+                onClick={e=> {
+                  e.stopPropagation();
+                  toast.promise(deleteChat(e, chat._id), {
+                    loading:'deleting...'
+                  });
+                }}
+              >
+                <FiTrash2 size={16} />
+              </button>
             </div>
           ))}
       </div>
@@ -118,7 +127,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
       <div onClick={()=> {navigate('/community'); setIsMenuOpen(false)}} 
       className="flex items-center gap-2 p-3 mt-4 border border-gray-300
       dark:border-white/15 rounded-md cursor-pointer hover:scale-103 transition-all">
-          <img src={assets.gallery_icon} className="w-4.5 not-dark:invert" alt='' />
+          <FiImage size={18} className="text-gray-700 dark:text-white shrink-0" />
           <div className="flex flex-col text-sm">
             <p>Community Images</p>
           </div>
@@ -126,7 +135,11 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
       <div className="flex items-center justify-between gap-2 p-3 mt-4 border border-gray-300
       dark:border-white/15 rounded-md ">
           <div className="flex items-center gap-2 text-sm">
-            <img src={assets.theme_icon} className="w-4 not-dark:invert" alt="" />
+            {theme === "dark" ? (
+              <FiMoon size={17} className="text-blue-300 shrink-0" />
+            ) : (
+              <FiSun size={17} className="text-amber-500 shrink-0" />
+            )}
             <p>Dark Mode</p>
           </div>
           <label className="relative inline-flex cursor-pointer">
@@ -146,18 +159,35 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
               {user.name.charAt(0)}
             </div>
           ) : (
-            <img src={assets.user_icon} className="w-7 rounded-full" alt="" />
+            <div className="w-7 h-7 min-w-7 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+              <FaUser size={13} />
+            </div>
           )}
           <p className="flex-1 text-sm dark:text-gray-100 truncate">{user ? user.name :
            'Login your account' }</p>
-           {user && <img onClick={(e) => { e.stopPropagation(); logout(); }} src={assets.logout_icon} className={`h-5 cursor-pointer not-dark:invert ${
-             showLogoutMobile ? 'block' : 'hidden md:group-hover:block'
-           }`}/>}
+           {user && (
+             <button
+               type="button"
+               title="Logout"
+               onClick={(e) => { e.stopPropagation(); logout(); }}
+               className={`p-1 text-gray-500 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400 transition-colors cursor-pointer shrink-0 ${
+                 showLogoutMobile ? 'block' : 'hidden md:group-hover:block'
+               }`}
+             >
+               <FiLogOut size={18} />
+             </button>
+           )}
       </div>    
-      <img onClick={()=> setIsMenuOpen(false)} src={assets.close_icon} className="absolute top-3 right-3 w-5 h-5
-      cursor-pointer md:hidden not-dark:invert" alt="" />
+      <button
+        onClick={()=> setIsMenuOpen(false)}
+        className="absolute top-3 right-3 p-1 rounded-lg md:hidden text-gray-700 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
+        aria-label="Close menu"
+      >
+        <FiX size={20} />
+      </button>
     </div>
   );
 };
 
 export default Sidebar;
+

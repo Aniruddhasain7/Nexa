@@ -1,9 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { assets } from "../assets/assets";
+import logo_full from "../assets/logo_full.png";
+import logo_full_dark from "../assets/logo_full_dark.png";
 import Message from "./Message";
 import toast from "react-hot-toast";
-import { FaMicrophone, FaPlus, FaTimes, FaChevronDown } from "react-icons/fa";
+import { FaMicrophone, FaPlus, FaTimes, FaChevronDown, FaFilePdf, FaSquare } from "react-icons/fa";
+import { IoSend } from "react-icons/io5";
+
+const CHATBOX_PLACEHOLDERS = [
+  "Ask me anything",
+  "What is on your mind?",
+  "How can Nexa assist you today?",
+  "Let's create something amazing!",
+  "What can I help you learn or build?",
+];
 
 const Chatbot = () => {
   const containerRef = useRef(null);
@@ -24,10 +34,13 @@ const Chatbot = () => {
   const [mediaFile, setMediaFile] = useState(null);
   const [mediaPreview, setMediaPreview] = useState(null);
   const [mediaType, setMediaType] = useState(null);
+  const [chatBoxPlaceholder, setChatBoxPlaceholder] =
+    useState("Ask me anything");
 
   const getMediaCategory = (file) => {
     if (file.type.startsWith("image/")) return "image";
     if (file.type.startsWith("video/")) return "video";
+    if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) return "pdf";
     return "file";
   };
 
@@ -72,7 +85,9 @@ const Chatbot = () => {
             prompt.trim() ||
             (previewType === "image"
               ? "Analyze this image"
-              : `File: ${fileName}`),
+              : previewType === "pdf"
+                ? "Analyze this PDF document"
+                : `File: ${fileName}`),
           timestamp: Date.now(),
           isImage: false,
           mediaUrl: previewUrl,
@@ -223,7 +238,14 @@ const Chatbot = () => {
   };
 
   useEffect(() => {
-    if (selectedChat) setMessages(selectedChat.messages);
+    if (selectedChat) {
+      setMessages(selectedChat.messages);
+      const randomChatBox =
+        CHATBOX_PLACEHOLDERS[
+          Math.floor(Math.random() * CHATBOX_PLACEHOLDERS.length)
+        ];
+      setChatBoxPlaceholder(randomChatBox);
+    }
   }, [selectedChat]);
   useEffect(() => {
     if (containerRef.current) {
@@ -247,12 +269,12 @@ const Chatbot = () => {
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-primary">
             <img
-              src={theme === "dark" ? assets.logo_full : assets.logo_full_dark}
+              src={theme === "dark" ? logo_full : logo_full_dark}
               alt=""
               className="w-full max-w-56 sm:max-w-68"
             />
-            <p className="mt-5 text-4xl sm:text-6xl text-center text-gray-400 dark:text-white">
-              Ask me anything
+            <p className="mt-5 text-2xl sm:text-5xl text-center text-gray-400 dark:text-white">
+              {chatBoxPlaceholder}
             </p>
           </div>
         )}
@@ -299,6 +321,17 @@ const Chatbot = () => {
               className="h-20 w-20 object-cover rounded-xl border border-primary/20 shadow"
             />
           )}
+          {mediaType === "pdf" && (
+            <div
+              className="h-20 w-20 flex flex-col items-center justify-center rounded-xl
+              bg-red-500/15 dark:bg-red-950/40 border border-red-500/30 text-red-500 shadow"
+            >
+              <FaFilePdf size={28} />
+              <span className="text-[10px] font-semibold mt-1 text-red-500 tracking-wider">
+                PDF
+              </span>
+            </div>
+          )}
           {mediaType === "file" && (
             <div
               className="h-20 w-20 flex flex-col items-center justify-center rounded-xl
@@ -316,7 +349,7 @@ const Chatbot = () => {
               {mediaFile.name}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">
-              {(mediaFile.size / 1024).toFixed(1)} KB &bull; {mediaType}
+              {(mediaFile.size / 1024).toFixed(1)} KB &bull; {mediaType.toUpperCase()}
             </p>
           </div>
 
@@ -340,7 +373,7 @@ const Chatbot = () => {
           type="file"
           id="media-upload-input"
           className="hidden"
-          accept="image/*,video/*,.txt"
+          accept="image/*,video/*,.txt,.pdf,application/pdf"
           onChange={handleFileSelect}
         />
 
@@ -361,7 +394,7 @@ const Chatbot = () => {
           onChange={(e) => setPrompt(e.target.value)}
           value={prompt}
           type="text"
-          placeholder={mediaFile ? "Add a message" : "Ask anything"}
+          placeholder={mediaFile ? "Add a message" : "Ask anything..."}
           className="flex-1 w-full text-sm outline-none bg-transparent"
           required={!mediaFile}
         />
@@ -442,20 +475,21 @@ const Chatbot = () => {
         )}
 
         {loading ? (
-          <button type="button" onClick={onStop}>
-            <img
-              src={assets.stop_icon}
-              className="w-8 cursor-pointer"
-              alt="stop"
-            />
+          <button
+            type="button"
+            onClick={onStop}
+            className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-red-500 to-rose-600 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md animate-pulse"
+            title="Stop generation"
+          >
+            <FaSquare size={11} />
           </button>
         ) : prompt.trim() || mediaFile ? (
-          <button type="submit">
-            <img
-              src={assets.send_icon}
-              className="w-8 cursor-pointer"
-              alt="send"
-            />
+          <button
+            type="submit"
+            className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md"
+            title="Send message"
+          >
+            <IoSend size={14} className="translate-x-[1px]" />
           </button>
         ) : (
           <button

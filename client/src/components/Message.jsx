@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
-import { assets } from '../assets/assets'
 import { useAppContext } from '../context/AppContext'
 import moment from 'moment'
 import Markdown from 'react-markdown'
 import Prism from 'prismjs'
+import { FaFilePdf, FaUser } from 'react-icons/fa'
 
 const MediaAttachment = ({ mediaUrl, mediaType, isLocal }) => {
   if (!mediaUrl) return null
@@ -26,6 +26,28 @@ const MediaAttachment = ({ mediaUrl, mediaType, isLocal }) => {
         controls
         className='max-w-xs rounded-xl mt-1 border border-primary/20 shadow'
       />
+    )
+  }
+
+  if (mediaType === 'pdf') {
+    return (
+      <a
+        href={mediaUrl}
+        target='_blank'
+        rel='noopener noreferrer'
+        className={`flex items-center gap-2.5 mt-1 px-3.5 py-2.5 rounded-xl
+          bg-red-500/10 dark:bg-red-950/30 border border-red-500/30
+          text-xs text-red-500 hover:bg-red-500/20 transition-all w-fit shadow-xs
+          ${isLocal ? 'opacity-70' : 'opacity-100'}`}
+      >
+        <FaFilePdf className='text-base text-red-500 shrink-0' />
+        <div className='flex flex-col'>
+          <span className='font-semibold text-red-500'>PDF Document</span>
+          <span className='text-[10px] text-gray-500 dark:text-gray-400 underline underline-offset-2'>
+            Click to view document
+          </span>
+        </div>
+      </a>
     )
   }
 
@@ -76,7 +98,9 @@ const Message = ({ message }) => {
               {user.name.charAt(0)}
             </div>
           ) : (
-            <img src={assets.user_icon} alt="" className='w-8 rounded-full' />
+            <div className='w-8 h-8 min-w-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300'>
+              <FaUser size={13} />
+            </div>
           )}
         </div>
       ) : (

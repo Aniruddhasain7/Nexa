@@ -4,7 +4,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import ChatBox from "./components/ChatBox";
 import Community from "./pages/Community";
 import { useState } from "react";
-import { assets } from "./assets/assets";
+import { FiMenu } from "react-icons/fi";
 import './assets/prism.css'
 import Loading from "./pages/Loading";
 import { useAppContext } from "./context/AppContext";
@@ -20,9 +20,15 @@ const App = () => {
   return (
     <>
     <Toaster />
-    {user && !isMenuOpen && <img src={assets.menu_icon} className="absolute top-3 left-3
-    w-8 h-8 cursor-pointer md:hidden not-dark:invert" onClick={()=> setIsMenuOpen
-      (true)}/>}
+    {user && !isMenuOpen && (
+      <button
+        onClick={() => setIsMenuOpen(true)}
+        className="absolute top-3 left-3 p-1.5 rounded-lg md:hidden text-gray-700 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors z-10 cursor-pointer"
+        aria-label="Open menu"
+      >
+        <FiMenu size={26} />
+      </button>
+    )}
 
       {user ? (
       <div className="dark:bg-gradient-to-b from-[#242124] to-[#000000] dark:text-white ">

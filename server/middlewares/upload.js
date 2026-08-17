@@ -6,7 +6,7 @@ const fileFilter = (req, file, cb) => {
   const allowed = [
     'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
     'video/mp4', 'video/webm', 'video/ogg',
-    'text/plain',
+    'text/plain', 'application/pdf',
   ]
   if (allowed.includes(file.mimetype)) {
     cb(null, true)

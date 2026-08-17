@@ -2,16 +2,23 @@ import axios from "axios";
 import Chat from "../models/Chat.js";
 import imagekit from "../configs/imagekit.js";
 import openai from "../configs/openai.js";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse");
 
 const getMedType = (mime) => {
-  if (mime.startsWith('image/')) return 'image'
-  if (mime.startsWith('video/')) return 'video'
-  return 'file'
-}
+  if (mime.startsWith("image/")) return "image";
+  if (mime.startsWith("video/")) return "video";
+  if (mime === "application/pdf" || mime.endsWith("/pdf")) return "pdf";
+  return "file";
+};
 
 export const textMessageController = async (req, res) => {
   let clientDisconnected = false;
-  req.on('close', () => { clientDisconnected = true; });
+  req.on("close", () => {
+    clientDisconnected = true;
+  });
 
   try {
     const userId = req.user._id;
@@ -20,7 +27,7 @@ export const textMessageController = async (req, res) => {
     const chat = await Chat.findOne({ userId, _id: chatId });
 
     const { choices } = await openai.chat.completions.create({
-      model: "gemini-2.5-flash-lite",
+      model: "gemini-3.5-flash",
       messages: [
         {
           role: "user",
@@ -29,7 +36,6 @@ export const textMessageController = async (req, res) => {
       ],
     });
 
-    
     if (clientDisconnected) return;
 
     chat.messages.push({
@@ -72,8 +78,8 @@ export const imageMessageController = async (req, res) => {
       isImage: false,
     });
     if (chat.name === "New Chat") {
-  chat.name = prompt.slice(0, 30);
-}
+      chat.name = prompt.slice(0, 30);
+    }
 
     const encodedPrompt = encodeURIComponent(prompt);
 
@@ -85,7 +91,7 @@ export const imageMessageController = async (req, res) => {
 
     const base64Image = `data:image/png;base64,${Buffer.from(
       aiImageResponse.data,
-      "binary"
+      "binary",
     ).toString("base64")}`;
 
     const uploadResponse = await imagekit.upload({
@@ -132,7 +138,13 @@ export const uploadMediaController = async (req, res) => {
     });
 
     const mediaUrl = uploadResponse.url;
-    const userContent = prompt?.trim() || (medType === 'image' ? 'Analyze this image' : 'Describe this file');
+    const userContent =
+      prompt?.trim() ||
+      (medType === "image"
+        ? "Analyze this image"
+        : medType === "pdf"
+          ? "Analyze this PDF document"
+          : "Describe this file");
 
     const userMessage = {
       role: "user",
@@ -146,7 +158,7 @@ export const uploadMediaController = async (req, res) => {
     if (chat.name === "New Chat") chat.name = userContent.slice(0, 30);
 
     let aiMessages;
-    if (medType === 'image') {
+    if (medType === "image") {
       aiMessages = [
         {
           role: "user",
@@ -156,8 +168,29 @@ export const uploadMediaController = async (req, res) => {
           ],
         },
       ];
-    } else if (medType === 'file' && file.mimetype === 'text/plain') {
-      const textContent = file.buffer.toString('utf-8');
+    } else if (medType === "pdf") {
+      let pdfText = "";
+      let numPages = 1;
+      try {
+        const parsed = await pdfParse(file.buffer);
+        pdfText = parsed.text ? parsed.text.trim() : "";
+        numPages = parsed.numpages || 1;
+      } catch (err) {
+        console.error("PDF parse error:", err.message);
+      }
+
+      const pdfContext = pdfText
+        ? `[Attached PDF Document: "${file.originalname}" (${numPages} page${numPages > 1 ? "s" : ""})]\n\nExtracted Text Content:\n${pdfText.slice(0, 15000)}`
+        : `[Attached PDF Document: "${file.originalname}" (${numPages} page${numPages > 1 ? "s" : ""})]\n\nNote: No text could be automatically extracted from this PDF document (it may contain scanned image pages).`;
+
+      aiMessages = [
+        {
+          role: "user",
+          content: `${userContent}\n\n${pdfContext}`,
+        },
+      ];
+    } else if (medType === "file" && file.mimetype === "text/plain") {
+      const textContent = file.buffer.toString("utf-8");
       aiMessages = [
         {
           role: "user",
@@ -174,7 +207,7 @@ export const uploadMediaController = async (req, res) => {
     }
 
     const { choices } = await openai.chat.completions.create({
-      model: "gemini-2.5-flash-lite",
+      model: "gemini-3.5-flash",
       messages: aiMessages,
     });
 

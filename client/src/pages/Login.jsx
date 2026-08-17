@@ -3,8 +3,9 @@ import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 import Input from "../components/Input";
 import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
-import { signInWithPopup } from 'firebase/auth';
-import { auth, provider } from '../config/firebase';
+import { FcGoogle } from "react-icons/fc";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -20,8 +21,12 @@ const Login = () => {
       const result = await signInWithPopup(auth, provider);
       const { user } = result;
       const { displayName: name, email, uid: googleId } = user;
-      
-      const { data } = await axios.post("/api/user/google", { name, email, googleId });
+
+      const { data } = await axios.post("/api/user/google", {
+        name,
+        email,
+        googleId,
+      });
       if (data.success) {
         setToken(data.token);
         localStorage.setItem("token", data.token);
@@ -31,7 +36,7 @@ const Login = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      if (error.code === 'auth/popup-closed-by-user') return;
+      if (error.code === "auth/popup-closed-by-user") return;
       toast.error(error.message);
     }
   };
