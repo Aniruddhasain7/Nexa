@@ -4,7 +4,14 @@ import logo_full from "../assets/logo_full.png";
 import logo_full_dark from "../assets/logo_full_dark.png";
 import Message from "./Message";
 import toast from "react-hot-toast";
-import { FaMicrophone, FaPlus, FaTimes, FaChevronDown, FaFilePdf, FaSquare } from "react-icons/fa";
+import {
+  FaMicrophone,
+  FaPlus,
+  FaTimes,
+  FaChevronDown,
+  FaFilePdf,
+  FaSquare,
+} from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 
 const CHATBOX_PLACEHOLDERS = [
@@ -40,7 +47,11 @@ const Chatbot = () => {
   const getMediaCategory = (file) => {
     if (file.type.startsWith("image/")) return "image";
     if (file.type.startsWith("video/")) return "video";
-    if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) return "pdf";
+    if (
+      file.type === "application/pdf" ||
+      file.name.toLowerCase().endsWith(".pdf")
+    )
+      return "pdf";
     return "file";
   };
 
@@ -71,6 +82,10 @@ const Chatbot = () => {
     if (!user) return toast("Login to send a message");
     try {
       setLoading(true);
+      const trimmedPrompt = prompt.trim();
+      const formattedPrompt = trimmedPrompt
+        ? trimmedPrompt.charAt(0).toUpperCase() + trimmedPrompt.slice(1)
+        : "";
       const promptCopy = prompt;
       setPrompt("");
 
@@ -82,7 +97,7 @@ const Chatbot = () => {
         {
           role: "user",
           content:
-            prompt.trim() ||
+            formattedPrompt ||
             (previewType === "image"
               ? "Analyze this image"
               : previewType === "pdf"
@@ -99,7 +114,7 @@ const Chatbot = () => {
       const form = new FormData();
       form.append("file", mediaFile);
       form.append("chatId", selectedChat._id);
-      if (prompt.trim()) form.append("prompt", prompt.trim());
+      if (formattedPrompt) form.append("prompt", formattedPrompt);
 
       clearMedia();
 
@@ -144,8 +159,10 @@ const Chatbot = () => {
   };
 
   const sendMessage = async (inputPrompt) => {
-    const textToSend = inputPrompt || prompt;
-    if (!textToSend.trim()) return;
+    const rawText = inputPrompt || prompt;
+    if (!rawText.trim()) return;
+    const textToSend =
+      rawText.trim().charAt(0).toUpperCase() + rawText.trim().slice(1);
 
     try {
       if (!user) return toast("Login to send message");
@@ -264,7 +281,7 @@ const Chatbot = () => {
   );
 
   return (
-    <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-30 max-md:mt-14 2xl:pr-40">
+    <div className="flex-1 flex flex-col justify-between m-5 md:m-10 xl:mx-20 max-md:mt-14 2xl:pr-10">
       <div ref={containerRef} className="flex-1 mb-5 overflow-y-scroll">
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-primary">
@@ -305,8 +322,8 @@ const Chatbot = () => {
       {mediaFile && (
         <div
           className="relative flex items-center gap-3 mb-3 mx-auto w-full max-w-2xl
-          bg-primary/10 dark:bg-[#3c5a79]/20 border border-primary/30 dark:border-[#60679f]/30
-          rounded-2xl px-4 py-3"
+          bg-primary/20 dark:bg-[#18181b]/90 dark:backdrop-blur-md border border-primary/30 dark:border-white/10
+          shadow-md dark:shadow-black/40 rounded-2xl px-4 py-3"
         >
           {mediaType === "image" && mediaPreview && (
             <img
@@ -335,28 +352,29 @@ const Chatbot = () => {
           {mediaType === "file" && (
             <div
               className="h-20 w-20 flex flex-col items-center justify-center rounded-xl
-              bg-primary/20 dark:bg-[#3c5a79]/30 border border-primary/30"
+              bg-primary/20 dark:bg-[#27272a]/70 border border-primary/30 dark:border-white/10"
             >
               <span className="text-2xl">📄</span>
-              <span className="text-[10px] mt-1 text-gray-500 dark:text-gray-400 truncate w-16 text-center">
+              <span className="text-[10px] mt-1 text-gray-500 dark:text-zinc-400 truncate w-16 text-center">
                 {mediaFile.name.split(".").pop().toUpperCase()}
               </span>
             </div>
           )}
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium dark:text-gray-200 truncate">
+            <p className="text-sm font-medium dark:text-zinc-200 truncate">
               {mediaFile.name}
             </p>
-            <p className="text-xs text-gray-400 mt-0.5">
-              {(mediaFile.size / 1024).toFixed(1)} KB &bull; {mediaType.toUpperCase()}
+            <p className="text-xs text-gray-400 dark:text-zinc-400 mt-0.5">
+              {(mediaFile.size / 1024).toFixed(1)} KB &bull;{" "}
+              {mediaType.toUpperCase()}
             </p>
           </div>
 
           <button
             onClick={clearMedia}
-            className="absolute top-2 right-2 p-1 rounded-full bg-gray-200 dark:bg-gray-700
-            hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors text-gray-500 hover:text-red-500"
+            className="absolute top-2 right-2 p-1 rounded-full bg-gray-200 dark:bg-zinc-800
+            hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors text-gray-500 dark:text-zinc-400 hover:text-red-500"
           >
             <FaTimes size={11} />
           </button>
@@ -365,8 +383,8 @@ const Chatbot = () => {
 
       <form
         onSubmit={onSubmit}
-        className="bg-primary/20 dark:bg-[#3c5a79]/30 border border-primary
-        dark:border-[#60679f]/30 rounded-full w-full max-w-[750px] p-3 pl-4 mx-auto flex gap-4 items-center"
+        className="bg-primary/20 dark:bg-[#18181b]/90 dark:backdrop-blur-md border border-primary/30
+        dark:border-white/10 shadow-xs dark:shadow-2xl dark:shadow-black/50 rounded-full w-full max-w-[750px] p-3 pl-4 mx-auto flex gap-4 items-center focus-within:border-primary/50 focus-within:dark:border-white/20 transition-all"
       >
         <input
           ref={fileInputRef}
@@ -382,8 +400,8 @@ const Chatbot = () => {
           className={`p-2 rounded-full cursor-pointer transition-all
           ${
             mediaFile
-              ? "text-white bg-gradient-to-r from-[#00E5FF] to-[#0096FF]"
-              : "text-gray-500 hover:text-primary"
+              ? "text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF]"
+              : "text-gray-500 dark:text-zinc-400 hover:text-primary dark:hover:text-white"
           }`}
           title="Attach file"
         >
@@ -395,7 +413,7 @@ const Chatbot = () => {
           value={prompt}
           type="text"
           placeholder={mediaFile ? "Add a message" : "Ask anything..."}
-          className="flex-1 w-full text-sm outline-none bg-transparent"
+          className="flex-1 w-full text-sm outline-none bg-transparent text-gray-800 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500"
           required={!mediaFile}
         />
 
@@ -406,7 +424,7 @@ const Chatbot = () => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className={`text-sm pl-3 pr-2 outline-none bg-transparent cursor-pointer transition-colors flex items-center gap-1.5 ${
                 theme === "dark"
-                  ? "text-gray-400 hover:text-white"
+                  ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
               }`}
             >
@@ -426,7 +444,7 @@ const Chatbot = () => {
                 <div
                   className={`absolute bottom-full right-0 mb-3 w-32 rounded-xl overflow-hidden shadow-2xl z-50 animate-in fade-in slide-in-from-bottom-2 border ${
                     theme === "dark"
-                      ? "bg-black border-blue-500/30"
+                      ? "bg-[#18181b]/95 backdrop-blur-md border-white/10"
                       : "bg-white border-primary/20"
                   }`}
                 >
@@ -440,10 +458,10 @@ const Chatbot = () => {
                       className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all ${
                         mode === "text"
                           ? theme === "dark"
-                            ? "bg-blue-500/10 text-blue-400"
-                            : "bg-primary/10 text-primary"
+                            ? "bg-white/10 text-white font-medium"
+                            : "bg-primary/10 text-primary font-medium"
                           : theme === "dark"
-                            ? "text-gray-500 hover:bg-white/5 hover:text-gray-300"
+                            ? "text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       }`}
                     >
@@ -458,10 +476,10 @@ const Chatbot = () => {
                       className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all ${
                         mode === "image"
                           ? theme === "dark"
-                            ? "bg-blue-500/10 text-blue-400"
-                            : "bg-primary/10 text-primary"
+                            ? "bg-white/10 text-white font-medium"
+                            : "bg-primary/10 text-primary font-medium"
                           : theme === "dark"
-                            ? "text-gray-500 hover:bg-white/5 hover:text-gray-300"
+                            ? "text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       }`}
                     >
@@ -489,7 +507,7 @@ const Chatbot = () => {
             className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md"
             title="Send message"
           >
-            <IoSend size={14} className="translate-x-[1px]" />
+            <IoSend size={14} className="translate-x-px" />
           </button>
         ) : (
           <button
@@ -498,8 +516,8 @@ const Chatbot = () => {
             className={`p-2 rounded-full transition-all
             ${
               isRecording
-                ? "text-white animate-pulse bg-gradient-to-r from-[#00E5FF] to-[#0096FF]"
-                : "text-gray-500 hover:text-primary"
+                ? "text-white animate-pulse bg-linear-to-r from-[#00E5FF] to-[#0096FF]"
+                : "text-gray-500 dark:text-zinc-400 hover:text-primary dark:hover:text-white"
             }`}
           >
             <FaMicrophone size={16} />
