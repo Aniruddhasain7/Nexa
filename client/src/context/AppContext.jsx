@@ -16,6 +16,82 @@ export const AppContextProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loadingUser, setLoadingUser] = useState(true);
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState("account");
+  const [aiTone, setAiTone] = useState(localStorage.getItem("nexa_ai_tone") || "balanced");
+  const [autoScroll, setAutoScroll] = useState(
+    localStorage.getItem("nexa_auto_scroll") !== "false"
+  );
+  const [sendWithEnter, setSendWithEnter] = useState(
+    localStorage.getItem("nexa_send_with_enter") !== "false"
+  );
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setUser(null);
+    setChats([]);
+    setSelectedChat(null);
+    setIsSettingsOpen(false);
+    toast.success("Logged out successfully");
+  };
+
+  const updateUserName = async (newName) => {
+    try {
+      if (!token) return { success: false, message: "Not authenticated" };
+      if (!newName || !newName.trim()) {
+        toast.error("Name cannot be empty");
+        return { success: false };
+      }
+      const { data } = await axios.post(
+        "/api/user/update-profile",
+        { name: newName.trim() },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setUser(data.user);
+        setChats((prev) =>
+          prev.map((c) => ({ ...c, userName: data.user.name }))
+        );
+        toast.success(data.message || "Profile updated successfully");
+        return { success: true, user: data.user };
+      } else {
+        toast.error(data.message || "Failed to update profile");
+        return { success: false, message: data.message };
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || error.message || "Error updating name";
+      toast.error(msg);
+      return { success: false, message: msg };
+    }
+  };
+
+  const clearAllUserChats = async () => {
+    try {
+      if (!token) return { success: false };
+      const { data } = await axios.post(
+        "/api/chat/clear-all",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        setChats([]);
+        setSelectedChat(null);
+        toast.success(data.message || "All chats cleared");
+        await createNewChat();
+        return { success: true };
+      } else {
+        toast.error(data.message || "Failed to clear chats");
+        return { success: false };
+      }
+    } catch (error) {
+      toast.error(error.message || "Error clearing chats");
+      return { success: false };
+    }
+  };
+
   const fetchUser = async () => {
     try {
       const { data } = await axios.post(
@@ -82,6 +158,7 @@ export const AppContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
+
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -92,6 +169,18 @@ export const AppContextProvider = ({ children }) => {
   }, [theme]);
 
   useEffect(() => {
+    localStorage.setItem("nexa_ai_tone", aiTone);
+  }, [aiTone]);
+
+  useEffect(() => {
+    localStorage.setItem("nexa_auto_scroll", String(autoScroll));
+  }, [autoScroll]);
+
+  useEffect(() => {
+    localStorage.setItem("nexa_send_with_enter", String(sendWithEnter));
+  }, [sendWithEnter]);
+
+  useEffect(() => {
     if (user) {
       fetchUserChats();
     } else {
@@ -99,6 +188,7 @@ export const AppContextProvider = ({ children }) => {
       setSelectedChat(null);
     }
   }, [user]);
+
   useEffect(() => {
     if (token) {
       fetchUser();
@@ -125,8 +215,22 @@ export const AppContextProvider = ({ children }) => {
     token,
     setToken,
     axios,
+    logout,
+    updateUserName,
+    clearAllUserChats,
+    isSettingsOpen,
+    setIsSettingsOpen,
+    activeSettingsTab,
+    setActiveSettingsTab,
+    aiTone,
+    setAiTone,
+    autoScroll,
+    setAutoScroll,
+    sendWithEnter,
+    setSendWithEnter,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
 export const useAppContext = () => useContext(AppContext);
+

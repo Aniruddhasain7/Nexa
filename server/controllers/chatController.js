@@ -41,3 +41,14 @@ export const deleteChat = async (req, res) => {
     }
 }
 
+export const clearAllChats = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        await Chat.deleteMany({ userId });
+        res.json({ success: true, message: "All chats cleared successfully" });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+

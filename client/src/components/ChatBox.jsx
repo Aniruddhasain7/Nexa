@@ -27,7 +27,7 @@ const Chatbot = () => {
   const abortControllerRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const { selectedChat, theme, user, axios, token, fetchUserChats } =
+  const { selectedChat, theme, user, axios, token, fetchUserChats, autoScroll, sendWithEnter } =
     useAppContext();
 
   const [messages, setMessages] = useState([]);
@@ -265,13 +265,13 @@ const Chatbot = () => {
     }
   }, [selectedChat]);
   useEffect(() => {
-    if (containerRef.current) {
+    if (containerRef.current && (autoScroll ?? true)) {
       containerRef.current.scrollTo({
         top: containerRef.current.scrollHeight,
         behavior: "smooth",
       });
     }
-  }, [messages]);
+  }, [messages, autoScroll]);
 
   useEffect(
     () => () => {

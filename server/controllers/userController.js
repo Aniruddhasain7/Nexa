@@ -70,10 +70,39 @@ export const getUser=async (req, res)=>{
     }
 }
 
-export const getPublishedImages=async (req,res)=>{
+export const updateUserProfile = async (req, res) => {
     try {
-        const publishedImageMessages=await Chat.aggregate([
-            {$unwind: "$messages"},
+        const { name } = req.body;
+        if (!name || !name.trim()) {
+            return res.json({ success: false, message: "Name cannot be empty" });
+        }
+        const trimmedName = name.trim();
+        if (trimmedName.length > 50) {
+            return res.json({ success: false, message: "Name cannot exceed 50 characters" });
+        }
+
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { name: trimmedName },
+            { new: true }
+        ).select("-password");
+
+        await Chat.updateMany({ userId: req.user._id.toString() }, { userName: trimmedName });
+
+        res.json({
+            success: true,
+            message: "Profile name updated successfully",
+            user
+        });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}
+
+export const getPublishedImages = async (req, res) => {
+    try {
+        const publishedImageMessages = await Chat.aggregate([
+            { $unwind: "$messages" },
             {
                 $match: {
                     "messages.isImage": true,
@@ -83,13 +112,14 @@ export const getPublishedImages=async (req,res)=>{
             {
                 $project: {
                     _id: 0,
-                    imageUrl:"$messages.content",
+                    imageUrl: "$messages.content",
                     userName: "$userName"
                 }
             }
-        ])
-        res.json({ success: true, images: publishedImageMessages.reverse()})
+        ]);
+        res.json({ success: true, images: publishedImageMessages.reverse() });
     } catch (error) {
-        return res.json({ success: false, message: error.message })
+        return res.json({ success: false, message: error.message });
     }
 }
+
