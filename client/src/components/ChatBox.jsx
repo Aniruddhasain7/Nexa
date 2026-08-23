@@ -26,6 +26,7 @@ const Chatbot = () => {
   const containerRef = useRef(null);
   const abortControllerRef = useRef(null);
   const fileInputRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const { selectedChat, theme, user, axios, token, fetchUserChats, autoScroll, sendWithEnter } =
     useAppContext();
@@ -233,9 +234,12 @@ const Chatbot = () => {
     const recognition = new SpeechRecognition();
     recognition.onstart = () => setIsRecording(true);
     recognition.onresult = (event) => {
-      const transcript = Array.from(event.results)
+      const rawTranscript = Array.from(event.results)
         .map((r) => r[0].transcript)
         .join("");
+      const transcript = rawTranscript
+        ? rawTranscript.charAt(0).toUpperCase() + rawTranscript.slice(1)
+        : "";
       setPrompt(transcript);
       if (event.results[0].isFinal) {
         recognition.stop();
@@ -272,6 +276,13 @@ const Chatbot = () => {
       });
     }
   }, [messages, autoScroll]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 160)}px`;
+    }
+  }, [prompt]);
 
   useEffect(
     () => () => {
@@ -384,7 +395,7 @@ const Chatbot = () => {
       <form
         onSubmit={onSubmit}
         className="bg-primary/20 dark:bg-[#18181b]/90 dark:backdrop-blur-md border border-primary/30
-        dark:border-white/10 shadow-xs dark:shadow-2xl dark:shadow-black/50 rounded-full w-full max-w-[750px] p-3 pl-4 mx-auto flex gap-4 items-center focus-within:border-primary/50 focus-within:dark:border-white/20 transition-all"
+        dark:border-white/10 shadow-xs dark:shadow-2xl dark:shadow-black/50 rounded-full w-full max-w-187.5 p-2 sm:p-2.5 pl-3.5 sm:pl-4.5 pr-2.5 sm:pr-3 mx-auto flex gap-2.5 sm:gap-3 items-end focus-within:border-primary/50 focus-within:dark:border-white/20 transition-all"
       >
         <input
           ref={fileInputRef}
@@ -397,7 +408,7 @@ const Chatbot = () => {
 
         <label
           htmlFor="media-upload-input"
-          className={`p-2 rounded-full cursor-pointer transition-all
+          className={`p-2 rounded-full cursor-pointer transition-all mb-0.5
           ${
             mediaFile
               ? "text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF]"
@@ -408,21 +419,44 @@ const Chatbot = () => {
           <FaPlus size={16} />
         </label>
 
-        <input
-          onChange={(e) => setPrompt(e.target.value)}
+        <textarea
+          ref={textareaRef}
+          rows={1}
           value={prompt}
-          type="text"
+          onChange={(e) => {
+            const val = e.target.value;
+            setPrompt(val ? val.charAt(0).toUpperCase() + val.slice(1) : "");
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (sendWithEnter) {
+                if (!e.shiftKey) {
+                  e.preventDefault();
+                  if (prompt.trim() || mediaFile) {
+                    onSubmit(e);
+                  }
+                }
+              } else {
+                if (e.ctrlKey || e.metaKey) {
+                  e.preventDefault();
+                  if (prompt.trim() || mediaFile) {
+                    onSubmit(e);
+                  }
+                }
+              }
+            }
+          }}
           placeholder={mediaFile ? "Add a message" : "Ask anything..."}
-          className="flex-1 w-full text-sm outline-none bg-transparent text-gray-800 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500"
+          className="flex-1 w-full text-sm outline-none bg-transparent text-gray-800 dark:text-zinc-100 placeholder:text-gray-400 dark:placeholder:text-zinc-500 resize-none max-h-40 py-1.5 leading-relaxed overflow-y-auto"
           required={!mediaFile}
         />
 
         {!mediaFile && (
-          <div className="relative">
+          <div className="relative mb-0.5">
             <button
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className={`text-sm pl-3 pr-2 outline-none bg-transparent cursor-pointer transition-colors flex items-center gap-1.5 ${
+              className={`text-sm pl-2 pr-1.5 py-1.5 outline-none bg-transparent cursor-pointer transition-colors flex items-center gap-1.5 ${
                 theme === "dark"
                   ? "text-zinc-400 hover:text-white"
                   : "text-gray-500 hover:text-gray-900"
@@ -496,7 +530,7 @@ const Chatbot = () => {
           <button
             type="button"
             onClick={onStop}
-            className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-red-500 to-rose-600 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md animate-pulse"
+            className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-red-500 to-rose-600 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md animate-pulse mb-0.5"
             title="Stop generation"
           >
             <FaSquare size={11} />
@@ -504,7 +538,7 @@ const Chatbot = () => {
         ) : prompt.trim() || mediaFile ? (
           <button
             type="submit"
-            className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md"
+            className="w-8 h-8 min-w-8 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shadow-md mb-0.5"
             title="Send message"
           >
             <IoSend size={14} className="translate-x-px" />
@@ -513,7 +547,7 @@ const Chatbot = () => {
           <button
             type="button"
             onClick={toggleRecording}
-            className={`p-2 rounded-full transition-all
+            className={`p-2 rounded-full transition-all mb-0.5
             ${
               isRecording
                 ? "text-white animate-pulse bg-linear-to-r from-[#00E5FF] to-[#0096FF]"

@@ -60,7 +60,7 @@ const Login = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-88 sm:w-[392px]
+      className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-88 sm:w-98
       text-gray-300 rounded-2xl shadow-2xl border border-white/10
       bg-white/5 backdrop-blur-xl"
     >
@@ -73,7 +73,10 @@ const Login = () => {
 
       {state === "register" && (
         <Input
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            setName(val ? val.charAt(0).toUpperCase() + val.slice(1) : "");
+          }}
           value={name}
           placeholder="Name"
           type="text"
@@ -124,7 +127,7 @@ const Login = () => {
 
       <button
         type="submit"
-        className="bg-gradient-to-r from-[#00E5FF] to-[#0096FF] hover:opacity-90 transition-all
+        className="bg-linear-to-r from-[#00E5FF] to-[#0096FF] hover:opacity-90 transition-all
         text-white w-full py-2 rounded-full cursor-pointer"
       >
         {state === "register" ? "Create Account" : "Login"}

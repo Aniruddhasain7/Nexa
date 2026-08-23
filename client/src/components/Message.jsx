@@ -78,9 +78,7 @@ const Message = ({ message }) => {
     <div>
       {message.role === "user" ? (
         <div className="flex items-start justify-end my-4 gap-2">
-          <div
-            className="flex flex-col gap-1 p-3 px-4 bg-sky-50/90 border border-sky-200/80 dark:border-0 dark:bg-[#1f2430] dark:backdrop-blur-md shadow-xs dark:shadow-md dark:shadow-black/30 rounded-2xl max-w-2xl"
-          >
+          <div className="flex flex-col gap-1 p-3 px-4 bg-sky-50/90 border border-sky-200/80 dark:border-0 dark:bg-[#1f2430] dark:backdrop-blur-md shadow-xs dark:shadow-md dark:shadow-black/30 rounded-2xl max-w-2xl">
             <MediaAttachment
               mediaUrl={message.mediaUrl}
               mediaType={message.mediaType}
@@ -88,7 +86,7 @@ const Message = ({ message }) => {
             />
 
             {message.content && (
-              <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed first-letter:uppercase">
+              <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed whitespace-pre-wrap break-words first-letter:uppercase">
                 {message.content}
               </p>
             )}

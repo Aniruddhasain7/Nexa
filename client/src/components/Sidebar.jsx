@@ -67,12 +67,12 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
       />
       <button
         onClick={createNewChat}
-        className="flex justify-center items-center w-full py-2 mt-8 text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF] text-sm font-medium rounded-xl cursor-pointer shadow-md hover:opacity-95 transition-opacity"
+        className="flex justify-center items-center w-full py-2 mt-8 text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF] text-sm font-medium rounded-md cursor-pointer shadow-md hover:opacity-95 transition-opacity"
       >
         <span className="mr-2 text-xl font-bold">+</span>New Chat
       </button>
 
-      <div className="flex items-center gap-2 p-2.5 mt-4 border border-gray-400 dark:border-white/20 rounded-xl">
+      <div className="flex items-center gap-2 p-2.5 mt-4 border border-gray-400 dark:border-white/20 rounded-md">
         <FiSearch className="text-gray-400 text-base shrink-0" />
         <input
           onChange={(e) => setSearch(e.target.value)}
@@ -116,7 +116,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
                 }
               }}
               key={chat._id}
-              className="p-2.5 px-3.5 dark:bg-[#31407c]/10 border border-gray-300 dark:border-[#60899f]/15 rounded-xl cursor-pointer flex justify-between items-center group hover:border-[#00E5FF]/40 transition-colors"
+              className="p-2.5 px-3.5 dark:bg-[#31407c]/10 border border-gray-300 dark:border-[#60899f]/15 rounded-md cursor-pointer flex justify-between items-center group hover:border-[#00E5FF]/40 transition-colors"
             >
               <div className="min-w-0 flex-1 mr-2">
                 <p className="truncate text-xs font-medium text-gray-800 dark:text-gray-200">
@@ -149,7 +149,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
           navigate("/community");
           setIsMenuOpen(false);
         }}
-        className="flex items-center gap-3 p-2.5 mt-3 border border-gray-300 dark:border-white/15 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
+        className="flex items-center gap-3 p-2.5 mt-3 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
       >
         <FiImage size={17} className="text-cyan-600 dark:text-cyan-400 shrink-0" />
         <div className="flex flex-col text-xs font-medium text-gray-800 dark:text-gray-200">
@@ -162,7 +162,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
           setIsSettingsOpen(true);
           setIsMenuOpen(false);
         }}
-        className="flex items-center gap-3 p-2.5 mt-2 border border-gray-300 dark:border-white/15 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-all group"
+        className="flex items-center gap-3 p-2.5 mt-2 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-all group"
       >
         <FiSettings
           size={17}
@@ -181,7 +181,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
             setIsMenuOpen(false);
           }
         }}
-        className="flex items-center gap-3 p-2.5 mt-2 border border-gray-300 dark:border-white/15 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-all group"
+        className="flex items-center gap-3 p-2.5 mt-2 border border-gray-300 dark:border-white/15 rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-white/5 transition-all group"
         title="Open Profile Settings"
       >
         {user ? (

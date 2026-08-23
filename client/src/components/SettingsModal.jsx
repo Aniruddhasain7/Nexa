@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
+import logo from "../assets/logo.png";
 import {
   FiX,
   FiUser,
   FiMoon,
   FiSun,
-  FiSliders,
   FiDatabase,
   FiInfo,
   FiLogOut,
@@ -32,8 +32,6 @@ const SettingsModal = () => {
     updateUserName,
     clearAllUserChats,
     chats,
-    aiTone,
-    setAiTone,
     autoScroll,
     setAutoScroll,
     sendWithEnter,
@@ -87,7 +85,7 @@ const SettingsModal = () => {
           chats: chats,
         },
         null,
-        2
+        2,
       );
       const blob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -113,21 +111,17 @@ const SettingsModal = () => {
 
   const totalMessagesCount = chats.reduce(
     (acc, chat) => acc + (chat.messages ? chat.messages.length : 0),
-    0
+    0,
   );
   const totalImagesCount = chats.reduce(
     (acc, chat) =>
-      acc +
-      (chat.messages
-        ? chat.messages.filter((m) => m.isImage).length
-        : 0),
-    0
+      acc + (chat.messages ? chat.messages.filter((m) => m.isImage).length : 0),
+    0,
   );
 
   const tabs = [
     { id: "account", label: "Account & Profile", icon: FiUser },
     { id: "appearance", label: "Appearance & Theme", icon: FiMoon },
-    { id: "preferences", label: "AI Preferences", icon: FiSliders },
     { id: "data", label: "Data & Privacy", icon: FiDatabase },
     { id: "about", label: "Shortcuts & Info", icon: FiInfo },
   ];
@@ -148,9 +142,11 @@ const SettingsModal = () => {
 
         <div className="w-full md:w-64 p-5 bg-gray-50/80 dark:bg-[#121115]/80 border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/10 flex flex-col shrink-0">
           <div className="flex items-center gap-2.5 pb-4 mb-3 border-b border-gray-200 dark:border-white/10">
-            <div className="w-7 h-7 rounded-lg bg-linear-to-r from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white font-bold text-xs shadow-md">
-              N
-            </div>
+            <img
+              src={logo}
+              alt="Nexa Logo"
+              className="w-7 h-7 object-contain rounded-lg"
+            />
             <div>
               <h2 className="text-base font-semibold tracking-tight text-gray-900 dark:text-white">
                 Settings
@@ -221,7 +217,10 @@ const SettingsModal = () => {
                   <div className="w-16 h-16 rounded-full bg-linear-to-tr from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-cyan-500/20">
                     {user?.name?.charAt(0)?.toUpperCase() || "U"}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white dark:border-[#18161b] rounded-full" title="Online" />
+                  <div
+                    className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white dark:border-[#18161b] rounded-full"
+                    title="Online"
+                  />
                 </div>
                 <div className="text-center sm:text-left flex-1">
                   <h4 className="text-base font-semibold text-gray-900 dark:text-white">
@@ -254,7 +253,12 @@ const SettingsModal = () => {
                     type="text"
                     maxLength={50}
                     value={nameInput}
-                    onChange={(e) => setNameInput(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNameInput(
+                        val ? val.charAt(0).toUpperCase() + val.slice(1) : ""
+                      );
+                    }}
                     placeholder="Enter your full name"
                     className="flex-1 px-3.5 py-2 text-xs rounded-lg bg-white dark:bg-black/30 border border-gray-300 dark:border-white/15 focus:outline-none focus:ring-2 focus:ring-[#00E5FF]/40 text-gray-900 dark:text-white placeholder:text-gray-400"
                   />
@@ -276,7 +280,8 @@ const SettingsModal = () => {
                   </button>
                 </div>
                 <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                  This name is displayed across conversations, message headers, and published community images.
+                  This name is displayed across conversations, message headers,
+                  and published community images.
                 </p>
               </form>
 
@@ -285,18 +290,28 @@ const SettingsModal = () => {
                   Account Details
                 </h4>
                 <div className="flex justify-between items-center py-1.5 border-b border-gray-200/60 dark:border-white/5 text-xs">
-                  <span className="text-gray-500 dark:text-gray-400">Email Address</span>
-                  <span className="font-mono text-gray-800 dark:text-gray-200">{user?.email}</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Email Address
+                  </span>
+                  <span className="font-mono text-gray-800 dark:text-gray-200">
+                    {user?.email}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-gray-200/60 dark:border-white/5 text-xs">
-                  <span className="text-gray-500 dark:text-gray-400">User ID</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    User ID
+                  </span>
                   <span className="font-mono text-[11px] text-gray-800 dark:text-gray-300">
                     {user?._id || user?.id || "N/A"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 text-xs">
-                  <span className="text-gray-500 dark:text-gray-400">Account Status</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Active & Verified</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Account Status
+                  </span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                    Active & Verified
+                  </span>
                 </div>
               </div>
 
@@ -377,7 +392,8 @@ const SettingsModal = () => {
                       )}
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Sleek cosmic dark gradient background with vibrant glowing accents.
+                      Sleek cosmic dark gradient background with vibrant glowing
+                      accents.
                     </p>
                   </div>
                   <div className="mt-4 p-2.5 rounded-lg bg-[#1a171d] border border-white/10 space-y-1.5">
@@ -401,7 +417,9 @@ const SettingsModal = () => {
                         <div className="p-2 rounded-lg bg-amber-100 text-amber-600 border border-amber-200">
                           <FiSun size={18} />
                         </div>
-                        <span className="font-semibold text-sm">Light Mode</span>
+                        <span className="font-semibold text-sm">
+                          Light Mode
+                        </span>
                       </div>
                       {theme === "light" && (
                         <div className="w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center text-white">
@@ -410,7 +428,8 @@ const SettingsModal = () => {
                       )}
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Clean, high-contrast light theme optimized for day-time clarity.
+                      Clean, high-contrast light theme optimized for day-time
+                      clarity.
                     </p>
                   </div>
                   <div className="mt-4 p-2.5 rounded-lg bg-white border border-gray-200 space-y-1.5">
@@ -418,87 +437,6 @@ const SettingsModal = () => {
                     <div className="h-2 w-full bg-gray-200 rounded" />
                     <div className="h-2 w-24 bg-gray-300 rounded" />
                   </div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/3 border border-gray-200 dark:border-white/10 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-                      System Accent Gradient
-                    </h4>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                      Electric Cyan (#00E5FF) to Azure Blue (#0096FF)
-                    </p>
-                  </div>
-                  <div className="w-16 h-6 rounded-full bg-linear-to-r from-[#00E5FF] to-[#0096FF] shadow-xs" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeSettingsTab === "preferences" && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  AI & Chat Preferences
-                </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Fine-tune how Nexa generates responses and behaves during chats.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/3 border border-gray-200 dark:border-white/10 space-y-3">
-                <h4 className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-                  AI Response Tone & Style
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {[
-                    {
-                      id: "balanced",
-                      name: "Balanced & Natural",
-                      desc: "Default tone for versatile everyday assistance.",
-                    },
-                    {
-                      id: "creative",
-                      name: "Creative & Detailed",
-                      desc: "Rich explanations, expressive storytelling & metaphors.",
-                    },
-                    {
-                      id: "concise",
-                      name: "Concise & Direct",
-                      desc: "Speed-focused, short bullet points with minimal fluff.",
-                    },
-                    {
-                      id: "developer",
-                      name: "Code Specialist",
-                      desc: "Optimized for clean snippets, syntax, and debugging.",
-                    },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        setAiTone(item.id);
-                        toast.success(`Tone set to ${item.name}`);
-                      }}
-                      className={`p-3 rounded-lg text-left border transition-all cursor-pointer ${
-                        aiTone === item.id
-                          ? "border-[#00E5FF] bg-cyan-500/10 text-gray-900 dark:text-white font-medium shadow-xs"
-                          : "border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 text-gray-700 dark:text-gray-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold">{item.name}</span>
-                        {aiTone === item.id && (
-                          <span className="text-[10px] text-cyan-500 font-bold">ACTIVE</span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                        {item.desc}
-                      </p>
-                    </button>
-                  ))}
                 </div>
               </div>
 
@@ -557,7 +495,8 @@ const SettingsModal = () => {
                   Data & Privacy
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Manage your conversation archives, data exports, and history deletion.
+                  Manage your conversation archives, data exports, and history
+                  deletion.
                 </p>
               </div>
 
@@ -615,7 +554,8 @@ const SettingsModal = () => {
                       Clear All Conversations
                     </h4>
                     <p className="text-[11px] text-gray-500 dark:text-gray-400">
-                      Permanently delete all your chat sessions and conversation history.
+                      Permanently delete all your chat sessions and conversation
+                      history.
                     </p>
                   </div>
                   {!showClearConfirm ? (
@@ -669,14 +609,19 @@ const SettingsModal = () => {
                 <div className="space-y-1.5">
                   {[
                     { label: "Send Prompt", shortcut: "Enter" },
-                    { label: "Add New Line in Input", shortcut: "Shift + Enter" },
+                    {
+                      label: "Add New Line in Input",
+                      shortcut: "Shift + Enter",
+                    },
                     { label: "Close Modal / Dialogs", shortcut: "Escape" },
                   ].map((s, idx) => (
                     <div
                       key={idx}
                       className="flex justify-between items-center py-1.5 border-b last:border-b-0 border-gray-200/60 dark:border-white/5 text-xs"
                     >
-                      <span className="text-gray-600 dark:text-gray-400">{s.label}</span>
+                      <span className="text-gray-600 dark:text-gray-400">
+                        {s.label}
+                      </span>
                       <kbd className="px-2 py-0.5 rounded bg-gray-200 dark:bg-white/10 font-mono text-[11px] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-white/15 shadow-2xs">
                         {s.shortcut}
                       </kbd>
@@ -687,24 +632,30 @@ const SettingsModal = () => {
 
               <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/3 border border-gray-200 dark:border-white/10 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-linear-to-tr from-[#00E5FF] to-[#0096FF] flex items-center justify-center text-white font-bold text-lg shadow-md">
-                    N
-                  </div>
+                  <img
+                    src={logo}
+                    alt="Nexa Logo"
+                    className="w-10 h-10 object-contain rounded-xl"
+                  />
                   <div>
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                       Nexa AI Assistant
                     </h4>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Version 2.4.0 • Enterprise Ready
+                      Version 2.4.0
                     </p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Nexa is your multimodal AI co-pilot designed for fast text intelligence, image generation, PDF understanding, and code assistance.
+                  Nexa is your multimodal AI assistant designed for fast text
+                  intelligence, image generation, PDF understanding, and code
+                  assistance.
                 </p>
                 <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60 dark:border-white/5 text-[11px] text-gray-500 dark:text-gray-400">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>All Systems Operational • Powered by OpenAI & ImageKit</span>
+                  <span>
+                    All Systems Operational • Powered by Gemini & ImageKit
+                  </span>
                 </div>
               </div>
             </div>

@@ -18,7 +18,6 @@ export const AppContextProvider = ({ children }) => {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState("account");
-  const [aiTone, setAiTone] = useState(localStorage.getItem("nexa_ai_tone") || "balanced");
   const [autoScroll, setAutoScroll] = useState(
     localStorage.getItem("nexa_auto_scroll") !== "false"
   );
@@ -169,10 +168,6 @@ export const AppContextProvider = ({ children }) => {
   }, [theme]);
 
   useEffect(() => {
-    localStorage.setItem("nexa_ai_tone", aiTone);
-  }, [aiTone]);
-
-  useEffect(() => {
     localStorage.setItem("nexa_auto_scroll", String(autoScroll));
   }, [autoScroll]);
 
@@ -222,8 +217,6 @@ export const AppContextProvider = ({ children }) => {
     setIsSettingsOpen,
     activeSettingsTab,
     setActiveSettingsTab,
-    aiTone,
-    setAiTone,
     autoScroll,
     setAutoScroll,
     sendWithEnter,
