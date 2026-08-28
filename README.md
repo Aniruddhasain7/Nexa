@@ -4,145 +4,142 @@
   <img src="./assets/ss1.png" alt="Nexa" width="100%" style="border-radius: 12px;" />
 </p>
 
-Nexa is a **full-stack AI-powered chatbot application** that enables seamless interaction with advanced AI models. Chat via text or voice, perform multimodal analysis on images, PDF documents, text files, and videos, generate stunning images from natural language prompts, and share your creations with a global community.
+Nexa is a **full-stack AI-powered chatbot application** that enables seamless interaction with advanced AI models. Chat via text or voice, capture live camera snapshots, perform multimodal analysis on images, PDF documents, text files, and videos, generate stunning images from natural language prompts, and share your creations with a global community.
 
-Built with the **MERN Stack** (React 19, Express.js 5, Node.js, MongoDB), **Gemini 3.5 Flash**, **ImageKit CDN**, and **Tailwind CSS v4**, Nexa delivers instant, natural conversations with a premium dark-themed UI.
+Built with the **MERN Stack** (React 19, Express.js 5, Node.js, MongoDB), **Gemini AI (Multi-Model Fallback)**, **ImageKit CDN**, and **Tailwind CSS v4**, Nexa delivers instant, natural conversations with a premium dark/light-themed UI and comprehensive user controls.
 
 ---
 
 ## 🌟 Features
 
-### 💬 AI Chat
-
-- Real-time chatbot powered by **Gemini AI** (`gemini-3.5-flash`) via OpenAI-compatible SDK
+### 💬 AI Chat & Generation Control
+- Real-time chatbot powered by **Gemini AI** (`gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`) with automatic multi-model fallback via OpenAI-compatible SDK
 - Context-aware, multi-turn conversations
-- Persistent chat session history saved per user account
+- **Stop Generation Support** — Abort ongoing AI streaming/generation requests instantly with the interactive stop control
+- Persistent chat session history saved securely per user account
 
-### 🖼️ AI Image Generation & Community Feed
-
-- Generate AI images using ImageKit's dynamic AI Image Generation API
-- Publish creations to the community feed with a single click
-- High-performance media storage & delivery via **ImageKit CDN**
-
-### 🔐 Multi-Method Authentication
-
-- Secure **JWT-based** email/password authentication
-- **Google Sign-In** integration via Firebase OAuth
-- Password hashing with **bcryptjs**
-
-### 🎙️ Voice Input
-
-- Hands-free speech-to-text prompt input using microphone integration
-- Pulsing visual indicator active during speech capture
-- Powered natively by the **Web Speech API** (`SpeechRecognition`)
+### 📸 Live In-App Camera Capture
+- **Real-Time Camera Viewfinder**: Integrated camera modal to take live photos without leaving the chat interface
+- **Multi-Device Support**: Switch between front (selfie) and back (environment) cameras seamlessly
+- **Mirror View Mode**: Toggle horizontal mirror flipping for natural framing
+- **Self-Timer & Flash FX**: Built-in 3-second capture countdown with visual shutter flash effect
+- **Instant Preview & Retake**: Inspect your snapshot and confirm or retake before submitting directly to Gemini Vision for instant multimodal analysis
 
 ### 📤 Multimodal Media & File Analysis
-
-- 📷 **Image Analysis**: Upload images (`.jpeg`, `.png`, `.gif`, `.webp`, `.svg`) for visual AI context & processing via **Gemini Vision**.
+- 📷 **Image Analysis**: Upload images (`.jpeg`, `.png`, `.gif`, `.webp`, `.svg`) or snap live photos for visual AI context & processing via **Gemini Vision**.
 - 📄 **PDF Document Analysis**: Upload **PDF (`.pdf`)** files for serverless-safe text extraction using **`unpdf`**, multi-page parsing, and AI summarization/Q&A.
 - 📝 **Plain Text Documents**: Upload `.txt` files with automated context injection into AI prompts.
 - 🎥 **Video File Support**: Upload videos (`.mp4`, `.webm`, `.ogg`) viewable directly in chat with media URL awareness.
 - ⚡ **20 MB File Limit**: Enforced server-side in-memory upload limit via Multer middleware.
 
-### 🎨 Modern UI / UX
+### 🖼️ AI Image Generation & Community Feed
+- Generate AI images using ImageKit's dynamic AI Image Generation API
+- Publish creations to the community feed with a single click
+- High-performance media storage & delivery via **ImageKit CDN**
 
-- Sleek modern dark theme with responsive layout for desktop and mobile devices
-- Dynamic markdown output rendering with syntax highlighting via **PrismJS**
+### ⚙️ User Settings & Customization Modal
+- **Profile Management**: Update your display name with instant synchronization across active conversations
+- **Theme Customization**: Toggle between sleek Dark Mode and clean Light Mode with persistent localStorage caching
+- **Chat Behavior Controls**: Toggle automatic smooth scrolling to latest messages and customize Enter key actions (Send on Enter vs. Shift+Enter for newline)
+- **Data Export & Privacy**: Export entire chat histories in formatted JSON or securely purge all chat sessions with safety confirmation modals
+- **Keyboard Shortcuts Cheatsheet**: Quick reference guide for hotkeys and commands
+
+### 🔐 Multi-Method Authentication
+- Secure **JWT-based** email/password authentication
+- **Google Sign-In** integration via Firebase OAuth
+- Password hashing with **bcryptjs**
+
+### 🎙️ Voice Input
+- Hands-free speech-to-text prompt input using microphone integration
+- Pulsing visual indicator active during speech capture
+- Powered natively by the **Web Speech API** (`SpeechRecognition`)
+
+### 🎨 Modern UI / UX
+- Sleek modern design system with responsive layout for desktop and mobile devices
+- Dynamic markdown output rendering with syntax highlighting via **PrismJS** and one-click code copy
 - **Text / Image mode switcher** — seamlessly toggles between chat and image generation modes directly from the input bar
 
 ---
 
 ## 🏗️ System Architecture & Data Flow
 
-Nexa follows a **3-Tier Full-Stack Microservices Architecture** separating client-side rendering, server-side API orchestration, and external AI/cloud storage infrastructure.
+Nexa follows a **3-Tier Full-Stack Architecture** separating client-side rendering, server-side API orchestration, and external AI/cloud storage infrastructure.
 
 ```mermaid
 flowchart TD
-    %% ── Tier 1: Client Layer ──────────────────────────────
-    subgraph Tier1 ["🎨 Client Layer (Frontend - React 19 + Vite)"]
+    subgraph Client ["Client Layer (React 19 + Vite)"]
         direction TB
-        UI["User Interface (Tailwind CSS v4)"]
-        ChatUI["💬 Chat & Voice Interface"]
-        ImageUI["🖼️ Image Generation & Feed"]
-        AuthUI["🔐 Auth Form & Google OAuth"]
-        AxiosClient["📡 Axios HTTP Client / API Service"]
-        FirebaseSDK["🔥 Firebase Auth SDK"]
+        UI["User Interface (Tailwind CSS)"]
+        Chat["Chat & Voice Interface"]
+        Camera["Live Camera Modal"]
+        Settings["Settings & Preferences"]
+        ImageGen["Image Generation & Feed"]
+        Auth["Authentication Form"]
+        AxiosClient["Axios HTTP Client"]
+        FirebaseSDK["Firebase Auth SDK"]
+
+        UI --> Chat
+        UI --> Camera
+        UI --> Settings
+        UI --> ImageGen
+        UI --> Auth
+        Auth <-->|"OAuth Flow"| FirebaseSDK
+        Chat -->|"API Requests"| AxiosClient
+        Settings -->|"API Requests"| AxiosClient
+        ImageGen -->|"API Requests"| AxiosClient
+        Auth -->|"Auth Requests"| AxiosClient
     end
 
-    %% ── Tier 2: Server Layer ──────────────────────────────
-    subgraph Tier2 ["⚙️ Application Layer (Backend API - Express.js 5 / Node.js / Vercel Serverless)"]
+    subgraph Server ["Server Layer (Express 5 / Node.js)"]
         direction TB
-        Server["🚀 Express Server (server.js / api/index.js)"]
-        AuthMW["🔒 Auth Middleware (JWT Verification)"]
-        MulterMW["📁 Multer Middleware (Media & PDF Upload)"]
+        Express["Express Server (server.js)"]
+        AuthMW["Auth Middleware (JWT Verification)"]
+        MulterMW["Upload Middleware (Multer)"]
 
-        subgraph Controllers ["Controllers & Route Handlers"]
-            UserCtrl["userController.js\n(Auth & Community Feed)"]
-            ChatCtrl["chatController.js\n(Chat Sessions Management)"]
-            MsgCtrl["messageController.js\n(Text, Image Gen, Vision & PDF Parsing)"]
+        subgraph RouteControllers ["Route Controllers"]
+            UserCtrl["User Controller (userController.js)"]
+            ChatCtrl["Chat Controller (chatController.js)"]
+            MsgCtrl["Message Controller (messageController.js)"]
         end
+
+        Express --> AuthMW
+        Express --> MulterMW
+        AuthMW --> RouteControllers
+        MulterMW --> MsgCtrl
     end
 
-    %% ── Tier 3: Data & Cloud Layer ────────────────────────
-    subgraph Tier3 ["🍃 Data & External Services Layer"]
+    subgraph CloudData ["Data & External Services Layer"]
         direction TB
-        MongoDB[("🍃 MongoDB Database\n(Users & Chat History)")]
-        GeminiAI["🧠 Gemini AI API\n(gemini-3.5-flash Model)"]
-        ImageKit["🖼️ ImageKit CDN & AI Gen\n(Media Uploads & AI Image Prompting)"]
-        FirebaseAuth["🔥 Firebase OAuth Service"]
-        PdfParser["📄 unpdf Engine\n(Serverless PDF Text Extraction)"]
+        MongoDB[("MongoDB Database")]
+        GeminiAI["Gemini AI API"]
+        ImageKit["ImageKit CDN & AI Gen"]
+        FirebaseAuth["Firebase OAuth"]
+        PdfParser["unpdf Parser"]
     end
 
-    %% ── Connections: Client -> Server ──────────────────────
-    AuthUI -->|"Google Login"| FirebaseSDK
-    FirebaseSDK -->|"Return Identity Token"| AuthUI
-    AuthUI -->|"POST /api/user/google"| AxiosClient
+    AxiosClient -->|"HTTP / REST API (Bearer JWT)"| Express
 
-    ChatUI -->|"POST /api/message/text"| AxiosClient
-    ChatUI -->|"POST /api/message/upload-media"| AxiosClient
-    ImageUI -->|"POST /api/message/image"| AxiosClient
-    ImageUI -->|"POST /api/user/published-images"| AxiosClient
-
-    AxiosClient -->|"HTTP Requests + Bearer JWT"| Server
-
-    %% ── Connections: Server Internal Processing ──────────
-    Server --> AuthMW
-    AuthMW --> Controllers
-    MulterMW --> MsgCtrl
-    MsgCtrl -->|"Extract PDF Text"| PdfParser
-
-    %% ── Connections: Server -> Data & Services ───────────
-    UserCtrl -->|"Validate / Issue JWT & Query Feed"| MongoDB
+    UserCtrl -->|"User Data & Auth"| MongoDB
     UserCtrl -.->|"Verify Token"| FirebaseAuth
-
-    ChatCtrl -->|"CRUD Chat Documents"| MongoDB
-
-    MsgCtrl -->|"1. Process LLM / Vision / PDF Context"| GeminiAI
-    MsgCtrl -->|"2. Fetch/Upload Media & Generate AI Images"| ImageKit
-    MsgCtrl -->|"3. Save Message History & Media URLs"| MongoDB
-
-    %% ── Styles ──────────────────────────────────────────
-    classDef client fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff
-    classDef server fill:#0f172a,stroke:#a855f7,stroke-width:2px,color:#fff
-    classDef external fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#fff
-
-    class UI,ChatUI,ImageUI,AuthUI,AxiosClient,FirebaseSDK client
-    class Server,AuthMW,MulterMW,UserCtrl,ChatCtrl,MsgCtrl server
-    class MongoDB,GeminiAI,ImageKit,FirebaseAuth,PdfParser external
+    ChatCtrl -->|"Chat Sessions (CRUD)"| MongoDB
+    MsgCtrl -->|"Message Logs & Media URLs"| MongoDB
+    MsgCtrl -->|"Text & Vision LLM Queries"| GeminiAI
+    MsgCtrl -->|"Generate & Store Images"| ImageKit
+    MsgCtrl -->|"Extract Document Text"| PdfParser
 ```
 
 ### 🎭 Component Responsibilities
 
 | Tier                   | Component                           | Description & Responsibilities                                                                                                                                                  |
 | :--------------------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Client Layer**       | **React 19 Frontend**               | SPA built with Vite & Tailwind CSS v4. Handles user sessions, Web Speech voice recognition, markdown rendering with syntax highlighting, and media uploads.                     |
+| **Client Layer**       | **React 19 Frontend**               | SPA built with Vite & Tailwind CSS v4. Handles user sessions, camera capture, Web Speech voice recognition, markdown rendering with syntax highlighting, and media uploads.   |
 |                        | **Firebase Client SDK**             | Manages Google OAuth popups and extracts ID tokens for backend authentication.                                                                                                  |
 | **Application Layer**  | **Express API Gateway**             | Central Node.js server handling route dispatching (`/api/user`, `/api/chat`, `/api/message`), CORS, and environment configuration. Compatible with Vercel serverless functions. |
 |                        | **Auth Middleware (`auth.js`)**     | Validates Bearer JWT tokens on protected routes and attaches the authenticated user instance to `req.user`.                                                                     |
 |                        | **Multer Middleware (`upload.js`)** | Intercepts multipart file uploads in memory (images, PDFs, text, videos) up to 20MB.                                                                                            |
 |                        | **Message Controller**              | Orchestrates text LLM completions with Gemini AI, generates AI art via ImageKit, processes vision payloads, and parses PDF documents using `unpdf`.                             |
 | **Data & Cloud Layer** | **MongoDB (Mongoose)**              | Stores user profile data, hashed credentials, structured chat sessions, and message logs.                                                                                       |
-|                        | **Gemini AI API**                   | Generates response completions and analyzes visual/document context using the `gemini-3.5-flash` model.                                                                         |
+|                        | **Gemini AI API**                   | Generates response completions and analyzes visual/document context using Gemini models with automated multi-model fallback (`gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`). |
 |                        | **ImageKit CDN**                    | Executes dynamic AI image generation prompts, stores uploaded media assets, and delivers optimized CDN media.                                                                   |
 |                        | **`unpdf` Engine**                  | Serverless-safe text extraction and metadata extraction from uploaded PDF buffers without native OS dependencies.                                                               |
 
@@ -151,32 +148,29 @@ flowchart TD
 ### 🔄 Detailed Technical Data Flows
 
 #### 1. 💬 AI Text Chat Flow
-
 1. **User** submits a prompt in the React Chat Interface.
 2. **Axios Client** sends a `POST /api/message/text` request containing `chatId` and `prompt` along with the JWT `Authorization` header.
 3. **Auth Middleware** verifies the JWT and attaches `req.user`.
-4. **Message Controller** sends the user prompt to Gemini AI (`gemini-3.5-flash`) via the OpenAI SDK wrapper.
+4. **Message Controller** sends the user prompt to Gemini AI with automated model fallback (`gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`) via the OpenAI SDK wrapper.
 5. **Express Backend** saves user and assistant message objects into the MongoDB `Chat` document and returns the AI reply.
 
-#### 2. 🖼️ AI Image Generation Flow
+#### 2. 📸 Live Camera & Multimodal Analysis Flow
+1. **User** opens the Live Camera modal, frames the subject, and captures a photo (or uploads an image/PDF/text/video file).
+2. **Client** attaches the image blob and sends a `POST /api/message/upload-media` request with `chatId` and optional prompt.
+3. **Multer Middleware** parses the file buffer in memory and securely uploads the asset to ImageKit CDN (`nexa/uploads`).
+4. **Context Processing**:
+   - **Images & Camera Snaps**: Formats a vision payload array containing image URL and prompt for Gemini Vision.
+   - **PDFs**: Parses `file.buffer` using `unpdf`, extracts document text, and injects up to 15,000 characters into the prompt.
+   - **Text Files**: Reads UTF-8 contents directly from `file.buffer` and appends up to 10,000 characters to the prompt.
+   - **Videos & Others**: Injects media URL context into the Gemini prompt.
+5. **Gemini AI** processes the multimodal payload and returns a comprehensive analysis saved in MongoDB and rendered in chat.
 
+#### 3. 🖼️ AI Image Generation Flow
 1. **User** switches to Image Generation mode and inputs a descriptive prompt.
 2. **Axios Client** posts to `/api/message/image`.
 3. **Backend** constructs a dynamic ImageKit prompt URL (`ik-genimg-prompt-[prompt]`).
 4. **Backend Server** fetches the generated image buffer, converts it to base64, and uploads it to ImageKit CDN under the `nexa/` folder.
 5. **ImageKit** returns a CDN-hosted URL, which the backend saves to MongoDB and returns to the client.
-
-#### 3. 📤 Multimodal Media & PDF Document Analysis Flow
-
-1. **User** uploads an image, PDF document, text file, or video alongside an optional prompt.
-2. **Multer Middleware** parses the multipart file into `req.file.buffer`.
-3. **Backend Server** uploads the file to ImageKit (`nexa/uploads`) to secure a permanent CDN media URL.
-4. **Context Processing**:
-   - **Images**: Formats a vision payload array containing image URL and prompt.
-   - **PDFs**: Parses `file.buffer` using `unpdf`, extracts document text and page count, and injects up to 15,000 characters of text into the Gemini prompt.
-   - **Text Files**: Reads UTF-8 contents directly from `file.buffer` and appends up to 10,000 characters to the prompt.
-   - **Videos & Others**: Injects media URL context into the Gemini prompt.
-5. **Gemini AI** processes the multimodal request and returns a detailed completion, stored in MongoDB and returned to the client interface.
 
 ---
 
@@ -190,15 +184,17 @@ flowchart TD
 | `POST` | `/api/user/login`            | Public   | Authenticate user and return JWT token                 |
 | `POST` | `/api/user/google`           | Public   | Authenticate or sign up user via Firebase Google OAuth |
 | `POST` | `/api/user/data`             | Required | Retrieve current authenticated user details            |
+| `POST` | `/api/user/update-profile`   | Required | Update the user's display name                         |
 | `POST` | `/api/user/published-images` | Public   | Fetch all community-published AI generated images      |
 
 ### 💬 Chat Routes (`/api/chat`)
 
-| Method | Endpoint           | Auth     | Description                                       |
-| :----- | :----------------- | :------- | :------------------------------------------------ |
-| `GET`  | `/api/chat/create` | Required | Create a new chat session for the logged-in user  |
-| `GET`  | `/api/chat/get`    | Required | Retrieve all chat sessions for the logged-in user |
-| `POST` | `/api/chat/delete` | Required | Delete a specific chat session by `chatId`        |
+| Method | Endpoint           | Auth     | Description                                            |
+| :----- | :----------------- | :------- | :----------------------------------------------------- |
+| `GET`  | `/api/chat/create` | Required | Create a new chat session for the logged-in user       |
+| `GET`  | `/api/chat/get`    | Required | Retrieve all chat sessions for the logged-in user      |
+| `POST` | `/api/chat/delete` | Required | Delete a specific chat session by `chatId`             |
+| `POST` | `/api/chat/clear-all` | Required | Delete all chat conversations for the logged-in user |
 
 ### ✉️ Message Routes (`/api/message`)
 
@@ -206,7 +202,7 @@ flowchart TD
 | :----- | :-------------------------- | :------- | :------------------------------------------------------------- |
 | `POST` | `/api/message/text`         | Required | Send a text prompt to Gemini AI                                |
 | `POST` | `/api/message/image`        | Required | Generate an AI image via ImageKit dynamic prompt               |
-| `POST` | `/api/message/upload-media` | Required | Upload and analyze an image, PDF document, text file, or video |
+| `POST` | `/api/message/upload-media` | Required | Upload and analyze an image, live snapshot, PDF, text, or video |
 
 ---
 
@@ -214,16 +210,16 @@ flowchart TD
 
 ### 🎨 Frontend
 
-| Category             | Technology                   |
-| :------------------- | :--------------------------- |
-| **Framework**        | React 19 (Vite)              |
-| **Styling**          | Tailwind CSS v4              |
-| **Routing**          | React Router DOM v7          |
-| **HTTP Client**      | Axios                        |
-| **Auth Client**      | Firebase (Google OAuth)      |
-| **UI Components**    | React Hot Toast, React Icons |
-| **Markdown Parsing** | `react-markdown`, `prismjs`  |
-| **Date Formatting**  | Moment.js                    |
+| Category             | Technology                            |
+| :------------------- | :------------------------------------ |
+| **Framework**        | React 19 (Vite)                       |
+| **Styling**          | Tailwind CSS v4                       |
+| **Routing**          | React Router DOM v7                   |
+| **HTTP Client**      | Axios                                 |
+| **Auth Client**      | Firebase (Google OAuth)               |
+| **UI Components**    | React Hot Toast, React Icons          |
+| **Markdown Parsing** | `react-markdown`, `prismjs`           |
+| **Date Formatting**  | Moment.js                             |
 
 ### ⚙️ Backend
 
@@ -242,7 +238,7 @@ flowchart TD
 
 | Service           | Purpose                                                                     |
 | :---------------- | :-------------------------------------------------------------------------- |
-| **Gemini AI API** | Multimodal LLM text completions & image vision context (`gemini-3.5-flash`) |
+| **Gemini AI API** | Multimodal LLM text completions & vision context (`gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.5-pro`) |
 | **ImageKit CDN**  | Dynamic AI image prompt rendering & media file storage                      |
 | **Firebase Auth** | Google OAuth authentication identity verification                           |
 
@@ -256,11 +252,12 @@ Nexa/
 ├── client/                  # React frontend (Vite)
 │   ├── src/
 │   │   ├── assets/          # Static UI icons & images
-│   │   ├── components/      # UI components (ChatBox, Sidebar, Message, Input, etc.)
+│   │   ├── components/      # UI components (ChatBox, Camera, Settings, Message, Sidebar)
 │   │   ├── config/          # Firebase initialization
 │   │   ├── context/         # React Context state management (AppContext.jsx)
-│   │   ├── pages/           # Application pages (Chat, Community, Login, Loading)
+│   │   ├── pages/           # Application pages (Community, Loading, Login)
 │   │   ├── App.jsx          # Root component & routing
+│   │   ├── index.css        # Global CSS & Tailwind styling
 │   │   └── main.jsx         # Entry point
 │   ├── public/
 │   ├── package.json

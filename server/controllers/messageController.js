@@ -11,6 +11,35 @@ const getMedType = (mime) => {
   return "file";
 };
 
+const GEMINI_MODELS = [
+  "gemini-3.1-flash-lite",
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-pro",
+];
+
+const createGeminiCompletion = async (messages, models = GEMINI_MODELS) => {
+  let lastError = null;
+
+  for (const model of models) {
+    try {
+      const response = await openai.chat.completions.create({
+        model,
+        messages,
+      });
+      return response;
+    } catch (error) {
+      console.warn(
+        `[Gemini Fallback] Model "${model}" failed: ${error.message}. Trying next Gemini model...`,
+      );
+      lastError = error;
+    }
+  }
+
+  throw new Error(
+    `All Gemini fallback models failed. Last error: ${lastError?.message}`,
+  );
+};
+
 export const textMessageController = async (req, res) => {
   let clientDisconnected = false;
   req.on("close", () => {
@@ -23,15 +52,12 @@ export const textMessageController = async (req, res) => {
 
     const chat = await Chat.findOne({ userId, _id: chatId });
 
-    const { choices } = await openai.chat.completions.create({
-      model: "gemini-3.5-flash",
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-    });
+    const { choices } = await createGeminiCompletion([
+      {
+        role: "user",
+        content: prompt,
+      },
+    ]);
 
     if (clientDisconnected) return;
 
@@ -204,10 +230,7 @@ export const uploadMediaController = async (req, res) => {
       ];
     }
 
-    const { choices } = await openai.chat.completions.create({
-      model: "gemini-3.5-flash",
-      messages: aiMessages,
-    });
+    const { choices } = await createGeminiCompletion(aiMessages);
 
     const reply = {
       role: "assistant",

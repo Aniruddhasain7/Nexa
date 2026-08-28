@@ -166,7 +166,7 @@ const Sidebar = ({ isMenuOpen, setIsMenuOpen }) => {
       >
         <FiSettings
           size={17}
-          className="text-cyan-600 dark:text-cyan-400 group-hover:rotate-45 transition-transform duration-300 shrink-0"
+          className="text-cyan-600 dark:text-cyan-400"
         />
         <div className="flex flex-col text-xs font-medium text-gray-800 dark:text-gray-200">
           <p>Settings</p>

@@ -10,18 +10,18 @@ import Loading from "./pages/Loading";
 import { useAppContext } from "./context/AppContext";
 import Login from "./pages/Login";
 import { Toaster } from 'react-hot-toast'
-import SettingsModal from "./components/SettingsModal";
+import Settings from "./components/Settings";
 
 const App = () => {
-  const { user, loadingUser } = useAppContext();
+  const { user, loadingUser, isAuthenticating } = useAppContext();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { pathname } = useLocation();
-  if (pathname === '/loading' || loadingUser) return <Loading />;
+  if (pathname === '/loading' || loadingUser || isAuthenticating) return <Loading />;
   return (
     <>
       <Toaster />
-      <SettingsModal />
+      <Settings />
       {user && !isMenuOpen && (
         <button
           onClick={() => setIsMenuOpen(true)}

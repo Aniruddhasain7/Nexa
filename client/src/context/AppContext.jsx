@@ -15,6 +15,7 @@ export const AppContextProvider = ({ children }) => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState("account");
@@ -91,22 +92,31 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  const fetchUser = async () => {
+  const fetchUser = async (userToken) => {
+    const activeToken = userToken || token || localStorage.getItem("token");
+    if (!activeToken) {
+      setUser(null);
+      setLoadingUser(false);
+      return;
+    }
     try {
       const { data } = await axios.post(
         "/api/user/data",
         {},
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${activeToken}` },
         },
       );
       if (data.success) {
         setUser(data.user);
       } else {
         toast.error(data.message);
+        localStorage.removeItem("token");
+        setToken(null);
+        setUser(null);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     } finally {
       setLoadingUser(false);
     }
@@ -186,7 +196,7 @@ export const AppContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      fetchUser();
+      fetchUser(token);
     } else {
       setUser(null);
       setLoadingUser(false);
@@ -206,6 +216,9 @@ export const AppContextProvider = ({ children }) => {
     setTheme,
     createNewChat,
     loadingUser,
+    setLoadingUser,
+    isAuthenticating,
+    setIsAuthenticating,
     fetchUserChats,
     token,
     setToken,

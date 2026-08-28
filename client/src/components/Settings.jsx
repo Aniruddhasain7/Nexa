@@ -19,7 +19,7 @@ import {
 import moment from "moment";
 import toast from "react-hot-toast";
 
-const SettingsModal = () => {
+const Settings = () => {
   const {
     isSettingsOpen,
     setIsSettingsOpen,
@@ -316,7 +316,7 @@ const SettingsModal = () => {
               </div>
 
               <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20 space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <h4 className="text-xs font-semibold text-red-600 dark:text-red-400">
                       Sign Out
@@ -329,24 +329,24 @@ const SettingsModal = () => {
                     <button
                       type="button"
                       onClick={() => setShowLogoutConfirm(true)}
-                      className="px-3.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="px-3.5 py-2 text-xs font-medium text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0 whitespace-nowrap self-start sm:self-auto"
                     >
                       <FiLogOut size={13} />
                       Log Out
                     </button>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
                       <button
                         type="button"
                         onClick={logout}
-                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer"
+                        className="px-3.5 py-2 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer whitespace-nowrap flex-1 sm:flex-initial text-center"
                       >
                         Confirm Log Out
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowLogoutConfirm(false)}
-                        className="px-2.5 py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                        className="px-3 py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
                       >
                         Cancel
                       </button>
@@ -527,7 +527,7 @@ const SettingsModal = () => {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/3 border border-gray-200 dark:border-white/10 flex items-center justify-between">
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-white/3 border border-gray-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h4 className="text-xs font-semibold text-gray-800 dark:text-gray-200">
                     Export Chat History
@@ -539,7 +539,7 @@ const SettingsModal = () => {
                 <button
                   type="button"
                   onClick={handleExportData}
-                  className="px-3.5 py-2 text-xs font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/15 hover:bg-gray-100 dark:hover:bg-white/15 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+                  className="px-3.5 py-2 text-xs font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/15 hover:bg-gray-100 dark:hover:bg-white/15 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap self-start sm:self-auto"
                 >
                   <FiDownload size={14} className="text-cyan-500" />
                   Export JSON
@@ -547,7 +547,7 @@ const SettingsModal = () => {
               </div>
 
               <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20 space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <h4 className="text-xs font-semibold text-red-600 dark:text-red-400 flex items-center gap-1.5">
                       <FiTrash2 size={13} />
@@ -562,24 +562,24 @@ const SettingsModal = () => {
                     <button
                       type="button"
                       onClick={() => setShowClearConfirm(true)}
-                      className="px-3.5 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                      className="px-3.5 py-2 text-xs font-medium text-red-600 dark:text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer shrink-0 whitespace-nowrap self-start sm:self-auto"
                     >
                       Clear All
                     </button>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap sm:flex-nowrap">
                       <button
                         type="button"
                         disabled={isClearingChats}
                         onClick={handleClearAll}
-                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                        className="px-3.5 py-2 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap flex-1 sm:flex-initial text-center"
                       >
                         {isClearingChats ? "Clearing..." : "Yes, Delete All"}
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowClearConfirm(false)}
-                        className="px-2.5 py-1.5 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                        className="px-3 py-2 text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
                       >
                         Cancel
                       </button>
@@ -666,4 +666,4 @@ const SettingsModal = () => {
   );
 };
 
-export default SettingsModal;
+export default Settings;

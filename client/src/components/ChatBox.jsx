@@ -3,15 +3,18 @@ import { useAppContext } from "../context/AppContext";
 import logo_full from "../assets/logo_full.png";
 import logo_full_dark from "../assets/logo_full_dark.png";
 import Message from "./Message";
+import Camera from "./Camera";
 import toast from "react-hot-toast";
 import {
   FaMicrophone,
   FaPlus,
+  FaCamera,
   FaTimes,
   FaChevronDown,
   FaFilePdf,
   FaSquare,
 } from "react-icons/fa";
+import { LuPaperclip } from "react-icons/lu";
 import { IoSend } from "react-icons/io5";
 
 const CHATBOX_PLACEHOLDERS = [
@@ -38,6 +41,8 @@ const Chatbot = () => {
   const [isPublished, setIsPublished] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
 
   const [mediaFile, setMediaFile] = useState(null);
   const [mediaPreview, setMediaPreview] = useState(null);
@@ -60,6 +65,13 @@ const Chatbot = () => {
     setMediaFile(null);
     setMediaPreview(null);
     setMediaType(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleCameraCapture = (file, previewUrl) => {
+    setMediaFile(file);
+    setMediaType("image");
+    setMediaPreview(previewUrl);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -406,18 +418,109 @@ const Chatbot = () => {
           onChange={handleFileSelect}
         />
 
-        <label
-          htmlFor="media-upload-input"
-          className={`p-2 rounded-full cursor-pointer transition-all mb-0.5
-          ${
-            mediaFile
-              ? "text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF]"
-              : "text-gray-500 dark:text-zinc-400 hover:text-primary dark:hover:text-white"
-          }`}
-          title="Attach file"
-        >
-          <FaPlus size={16} />
-        </label>
+        <div className="relative mb-0.5">
+          <button
+            type="button"
+            onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+            className={`p-2 rounded-full cursor-pointer transition-all duration-300 ${
+              mediaFile
+                ? "text-white bg-linear-to-r from-[#00E5FF] to-[#0096FF]"
+                : attachMenuOpen
+                  ? "text-white bg-primary/30 dark:bg-white/15"
+                  : "text-gray-500 dark:text-zinc-400 hover:text-primary dark:hover:text-white"
+            }`}
+            title="Attach file or take photo"
+          >
+            <FaPlus
+              size={15}
+              className={`transition-transform duration-300 ${
+                attachMenuOpen ? "rotate-45" : ""
+              }`}
+            />
+          </button>
+
+          {attachMenuOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setAttachMenuOpen(false)}
+              ></div>
+              <div
+                className={`absolute bottom-full left-0 mb-3 w-56 rounded-2xl overflow-hidden shadow-2xl z-50 animate-in fade-in slide-in-from-bottom-2 border p-1.5 flex flex-col gap-1 ${
+                  theme === "dark"
+                    ? "bg-[#18181b]/95 backdrop-blur-xl border-white/10 shadow-black/80"
+                    : "bg-white/95 backdrop-blur-xl border-primary/20 shadow-xl"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttachMenuOpen(false);
+                    fileInputRef.current?.click();
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all group cursor-pointer ${
+                    theme === "dark"
+                      ? "hover:bg-white/10 text-zinc-200 hover:text-white"
+                      : "hover:bg-primary/10 text-gray-700 hover:text-primary"
+                  }`}
+                >
+                  <div
+                    className={`p-2 rounded-xl transition-colors ${
+                      theme === "dark"
+                        ? "bg-white/5 group-hover:bg-[#00E5FF]/20 text-[#00E5FF]"
+                        : "bg-primary/10 group-hover:bg-primary/20 text-primary"
+                    }`}
+                  >
+                    <LuPaperclip size={16} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold">Upload File</span>
+                    <span
+                      className={`text-[10px] ${
+                        theme === "dark" ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      Images, PDFs, documents
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAttachMenuOpen(false);
+                    setIsCameraOpen(true);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all group cursor-pointer ${
+                    theme === "dark"
+                      ? "hover:bg-white/10 text-zinc-200 hover:text-white"
+                      : "hover:bg-primary/10 text-gray-700 hover:text-primary"
+                  }`}
+                >
+                  <div
+                    className={`p-2 rounded-xl transition-colors ${
+                      theme === "dark"
+                        ? "bg-white/5 group-hover:bg-[#0096FF]/20 text-[#0096FF]"
+                        : "bg-primary/10 group-hover:bg-primary/20 text-primary"
+                    }`}
+                  >
+                    <FaCamera size={15} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold">Take Photo</span>
+                    <span
+                      className={`text-[10px] ${
+                        theme === "dark" ? "text-zinc-400" : "text-gray-500"
+                      }`}
+                    >
+                      Use live camera
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
 
         <textarea
           ref={textareaRef}
@@ -558,6 +661,13 @@ const Chatbot = () => {
           </button>
         )}
       </form>
+
+      <Camera
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCapture={handleCameraCapture}
+        theme={theme}
+      />
     </div>
   );
 };
