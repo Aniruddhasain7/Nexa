@@ -195,6 +195,11 @@ export const AppContextProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
+    // Proactively wake up backend server on initial app load
+    axios.get("/").catch(() => {});
+  }, []);
+
+  useEffect(() => {
     if (token) {
       fetchUser(token);
     } else {

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 
 const Loading = () => {
-  const [slowServerNotice, setSlowServerNotice] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setSlowServerNotice(true);
-    }, 3500);
+    const interval = setInterval(() => {
+      setElapsed((prev) => prev + 1);
+    }, 1000);
 
-    return () => clearTimeout(timer);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -29,8 +29,8 @@ const Loading = () => {
             <div className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-[#00E5FF] to-transparent rounded-full animate-shimmer" />
           </div>
 
-          {slowServerNotice && (
-            <p className="text-xs text-gray-400 font-light tracking-wide mt-2">
+          {elapsed >= 3 && (
+            <p className="text-xs text-gray-400 font-light tracking-wide mt-2 text-center">
               Connecting to server...
             </p>
           )}

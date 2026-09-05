@@ -52,7 +52,6 @@ const Chatbot = () => {
 
   const getMediaCategory = (file) => {
     if (file.type.startsWith("image/")) return "image";
-    if (file.type.startsWith("video/")) return "video";
     if (
       file.type === "application/pdf" ||
       file.name.toLowerCase().endsWith(".pdf")
@@ -84,7 +83,7 @@ const Chatbot = () => {
     const cat = getMediaCategory(file);
     setMediaFile(file);
     setMediaType(cat);
-    if (cat === "image" || cat === "video") {
+    if (cat === "image") {
       setMediaPreview(URL.createObjectURL(file));
     } else {
       setMediaPreview(null);
@@ -355,12 +354,6 @@ const Chatbot = () => {
               className="h-20 w-20 object-cover rounded-xl border border-primary/20 shadow"
             />
           )}
-          {mediaType === "video" && mediaPreview && (
-            <video
-              src={mediaPreview}
-              className="h-20 w-20 object-cover rounded-xl border border-primary/20 shadow"
-            />
-          )}
           {mediaType === "pdf" && (
             <div
               className="h-20 w-20 flex flex-col items-center justify-center rounded-xl
@@ -414,7 +407,7 @@ const Chatbot = () => {
           type="file"
           id="media-upload-input"
           className="hidden"
-          accept="image/*,video/*,.txt,.pdf,application/pdf"
+          accept="image/*,.txt,.pdf,application/pdf"
           onChange={handleFileSelect}
         />
 

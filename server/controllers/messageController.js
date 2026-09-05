@@ -6,7 +6,6 @@ import { extractText, getDocumentProxy } from "unpdf";
 
 const getMedType = (mime) => {
   if (mime.startsWith("image/")) return "image";
-  if (mime.startsWith("video/")) return "video";
   if (mime === "application/pdf" || mime.endsWith("/pdf")) return "pdf";
   return "file";
 };

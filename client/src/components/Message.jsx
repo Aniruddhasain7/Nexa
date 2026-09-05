@@ -19,16 +19,6 @@ const MediaAttachment = ({ mediaUrl, mediaType, isLocal }) => {
     );
   }
 
-  if (mediaType === "video") {
-    return (
-      <video
-        src={mediaUrl}
-        controls
-        className="max-w-xs rounded-xl mt-1 border border-primary/20 shadow"
-      />
-    );
-  }
-
   if (mediaType === "pdf") {
     return (
       <a
@@ -86,7 +76,7 @@ const Message = ({ message }) => {
             />
 
             {message.content && (
-              <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed whitespace-pre-wrap break-words first-letter:uppercase">
+              <p className="text-sm text-slate-900 dark:text-slate-100 leading-relaxed whitespace-pre-wrap wrap-break-word first-letter:uppercase">
                 {message.content}
               </p>
             )}
