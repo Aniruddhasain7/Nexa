@@ -10,6 +10,10 @@ Built with the **MERN Stack** (React 19, Express.js 5, Node.js, MongoDB), **Gemi
 
 ---
 
+[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-TRY_NOW-00F5FF?style=for-the-badge&logo=rocket&logoColor=00F5FF&labelColor=000000)](https://nexa-7.vercel.app/)
+
+---
+
 ## 🌟 Features
 
 ### 💬 AI Chat & Generation Control
